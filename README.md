@@ -2,7 +2,7 @@
 
 ## Introduction
 
-<img align="right" src="https://github.com/Kray-G/kinx-tiny-typesetting/raw/master/docs/userguide/title_book_en.png" width="200px" />
+<img align="right" src="https://github.com/Kray-G/kinx-tiny-typesetting/raw/master/docs/readme/coverpage.png" width="200px" />
 
 Tiny typesetting system as an additional module for Kinx.
 
@@ -47,7 +47,8 @@ It also provides a translator from Markdown,
 then you can typeset a Markdown document and can get a beautiful document.
 This document itself is also the example typeset by this system.
 
-The objective is similar to \\LaTeX, it is an objective to typeset beautifully for a document managed as a text file.
+The objective is similar to \\LaTeX,
+it is an objective to typeset beautifully for a document managed as a text file.
 To be concretely, it is never going to be alternative,
 but the objective is being more useful in the use case like your personal situation by followings.
 
