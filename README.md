@@ -2,7 +2,7 @@
 
 ## Introduction
 
-<img align="right" src="https://github.com/Kray-G/kinx-tiny-typesetting/raw/master/doc/title_book_en.png" width="200px" />
+<img align="right" src="https://github.com/Kray-G/kinx-tiny-typesetting/raw/master/docs/userguide/title_book_en.png" width="200px" />
 
 Tiny typesetting system as an additional module for Kinx.
 
