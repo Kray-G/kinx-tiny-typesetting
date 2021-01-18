@@ -1,0 +1,3 @@
+# Kinx highlight is currently not supported but...
+*.kx          text linguist-language=Kinx
+.spectest     text linguist-language=JSON linguist-detectable
