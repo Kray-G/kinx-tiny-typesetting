@@ -1,3 +1,9 @@
 # Kinx highlight is currently not supported but...
 *.kx          text linguist-language=Kinx
 .spectest     text linguist-language=JSON linguist-detectable
+
+# exclude files in directories below from github stats
+src/exec/phantomjs/*.js     linguist-vendored
+src/lib/chartjs/**/*.js     linguist-vendored
+src/lib/katex/**/*.js       linguist-vendored
+src/lib/katex/**/*.css      linguist-vendored
