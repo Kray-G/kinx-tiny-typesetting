@@ -30,6 +30,8 @@ Some text structures will be supported in future.
 
 #### Markdown Source
 
+Here is the head of the [source text](https://github.com/Kray-G/kinx-tiny-typesetting/raw/master/docs/userguide/KiTTy_en.md) of User Guide.
+
 ```markdown
 # Introduction
 
@@ -56,30 +58,15 @@ but the objective is being more useful in the use case like your personal situat
 KiTTy is small but it has a simple feature to typeset it beautifully,
 and it is a typesetting system to output PDF directly from Markdown document.
 
-### Versus \\LaTeX
-
-\\LaTeX is a huge system.
-It is extendable, it is supported by many people, and it is a typesetting system which can make a beautiful document.
-KiTTy is also a typesetting system which has a same objective as \\LaTeX,
-but it is provided as a small system with limited features.
-
-Being huge of \\LaTeX system causes a complexibility of an installation.
-Besides, there are multiple distributions to provide many functionality of \\TeX and \\LaTeX.
-That is the reason why people have to think first what distribution should be used.
-Everybody can use KiTTy soon because KiTTy is included in Kinx as a standard library,
-
-Only one cons point is that limited features[^1] are provided.
-And also the compilation speed is *slow*.
-It takes about 4 minutes to compile this document.
-The performance is one of problems,
-but this system is focusing what is used as a small and a personal use.
-
-[^1]: About ''limited features'', see \\nameref{Features Overview}.
+(...omitted...)
 ```
 
 #### Output Image
 
-![Output1](./docs/readme/output1.png)
+This document is a Book Style, so the Chapter text will be started the odd page on the left side.
+
+![Output1-1](./docs/readme/output1-1.png)
+![Output1-2](./docs/readme/output1-2.png)
 
 ## Table Of Contents
 
@@ -96,6 +83,11 @@ Table of contents will be automatically generated with the command `toc` below.
 
 ![Output2](./docs/readme/output2.png)
 
+## Cover Page
+
+Cover page can have a cover image. Here is an example.
+
+![CoverPage](./docs/readme/coverpage.png)
 
 ## License
 
