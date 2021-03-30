@@ -20,9 +20,11 @@ Some text structures will be supported in future.
     * User Guide in English ... ([Markdown](https://github.com/Kray-G/kinx-tiny-typesetting/raw/master/docs/userguide/KiTTy_en.md))
     * User Guide in Japanese ... ([Markdown](https://github.com/Kray-G/kinx-tiny-typesetting/raw/master/docs/userguide/KiTTy_jp.md))
 
-## Intallation
+## Installation
 
 * Install [Kinx](https://github.com/Kray-G/kinx) first.
+* Locate files of this project to the folder where Kinx was installed.
+    * (detail description is under construction)
 
 ## Example
 
