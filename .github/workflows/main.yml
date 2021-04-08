@@ -18,15 +18,8 @@ jobs:
           ref='${{ github.ref }}'
           tag=$(echo $ref | perl -e "print pop @{[split '/', <>]}")
 
-          mkdir -p $tag/lib/docs/licenses
-          mkdir -p $tag/lib/exec
-          mkdir -p $tag/lib/fonts
-          mkdir -p $tag/lib/phantomjs
-          cp -r ./docs/licenses/* $tag/lib/docs/licenses
-          cp -r ./src/lib/* $tag/lib
-          cp -r ./src/exec/kxkitty.kx $tag/lib/exec
-          cp -r ./src/fonts/* $tag/lib/fonts
-          cp -r ./src/exec/phantomjs/* $tag/lib/phantomjs
+          mkdir -p $tag
+          cp -r ./src/* $tag/
           zip -r package-kitty.zip $tag/
       - name: upload archive
         uses: actions/upload-artifact@v1
