@@ -139,24 +139,29 @@ namespace Typesetting {
                         }
                     }
                 }
+                var count = 0;
                 var widthlist;
-                do {
-                    var total = 0;
-                    for (var i = 0, l = lens.length(); i < l; ++i) {
-                        total += lens[i];
-                    }
-                    var width = 0;
-                    var ratio = width_ / total;
-                    widthlist = lens.map {
-                        var w = _1 * ratio;
-                        width += w;
-                        return {
-                            len: _1,
-                            width: w,
-                            areaWidth: w - info_.base.table.cellPadding * 2,
+                try {
+                    do {
+                        var total = 0;
+                        for (var i = 0, l = lens.length(); i < l; ++i) {
+                            total += lens[i];
+                        }
+                        var width = 0;
+                        var ratio = width_ / total;
+                        widthlist = lens.map {
+                            var w = _1 * ratio;
+                            width += w;
+                            return {
+                                len: _1,
+                                width: w,
+                                areaWidth: w - info_.base.table.cellPadding * 2,
+                            };
                         };
-                    };
-                } while (!checkWidth(lens, widthlist, texts));
+                    } while (count++ < 10 && !checkWidth(lens, widthlist, texts));
+                } catch {
+                    ;
+                }
 
                 return widthlist;
             }
