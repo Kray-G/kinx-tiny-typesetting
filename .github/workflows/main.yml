@@ -5,27 +5,25 @@ on:
     tags: ['v*']
 
 jobs:
-  package-kitty:
-    name: package-kitty
+  package:
+    name: package
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
-      - name: build
-        run: |
-          sudo make kitty-install
       - name: package
         run: |
           ref='${{ github.ref }}'
           tag=$(echo $ref | perl -e "print pop @{[split '/', <>]}")
 
-          mkdir -p $tag
+          mkdir -p $tag/docs
           cp -r ./src/* $tag/
-          zip -r package-kitty.zip $tag/
+          cp -r ./docs/* $tag/docs/
+          zip -r package.zip $tag/
       - name: upload archive
         uses: actions/upload-artifact@v1
         with:
-          name: package-kitty
-          path: package-kitty.zip
+          name: package
+          path: package.zip
 
   release:
     name: release
@@ -47,17 +45,17 @@ jobs:
     name: upload assets
     needs:
       - release
-      - package-kitty
+      - package
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        job: [package-kitty]
+        job: [package]
         include:
-          - job: package-kitty
-            jobname: package-kitty
-            download_name: package-kitty
-            asset_path: package-kitty.zip
-            asset_name: package_kitty.zip
+          - job: package
+            jobname: package
+            download_name: package
+            asset_path: package.zip
+            asset_name: package.zip
             content_type: application/zip
     steps:
       - name: download archive
