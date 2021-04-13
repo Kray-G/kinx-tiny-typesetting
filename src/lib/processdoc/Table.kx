@@ -19,7 +19,7 @@ namespace Typesetting {
             private adjustWidth(lens) {
                 var l = lens.length() - 1;
                 for (var i = 0; i < l; ++i) {
-                    if ((lens[i] * 2) < lens[i+1]) {
+                    if (0 < lens[i] && (lens[i] * 2) < lens[i+1]) {
                         for (var j = i+1; j <= l; ++j) {
                             lens[j] = lens[j] * 5 / 8;
                         }
@@ -34,7 +34,7 @@ namespace Typesetting {
                 var l = sorted.length();
                 for (var i = 0; i < l; ++i) {
                     var e = sorted[i];
-                    if (e.width.width < limitWidth_) {
+                    if (0 < e.width.width && e.width.width < limitWidth_) {
                         if (adjustWidth(lens)) {
                             return false;
                         }
@@ -139,29 +139,25 @@ namespace Typesetting {
                         }
                     }
                 }
-                var count = 0;
                 var widthlist;
-                try {
-                    do {
-                        var total = 0;
-                        for (var i = 0, l = lens.length(); i < l; ++i) {
-                            total += lens[i];
-                        }
-                        var width = 0;
-                        var ratio = width_ / total;
-                        widthlist = lens.map {
-                            var w = _1 * ratio;
-                            width += w;
-                            return {
-                                len: _1,
-                                width: w,
-                                areaWidth: w - info_.base.table.cellPadding * 2,
-                            };
+                do {
+                    var total = 0;
+                    for (var i = 0, l = lens.length(); i < l; ++i) {
+                        total += lens[i];
+                    }
+                    var width = 0;
+                    var ratio = System.try({ => width_ / total }).else();
+                    if (ratio.isUndefined) break;
+                    widthlist = lens.map {
+                        var w = _1 * ratio;
+                        width += w;
+                        return {
+                            len: _1,
+                            width: w,
+                            areaWidth: w - info_.base.table.cellPadding * 2,
                         };
-                    } while (count++ < 10 && !checkWidth(lens, widthlist, texts));
-                } catch {
-                    ;
-                }
+                    };
+                } while (!checkWidth(lens, widthlist, texts));
 
                 return widthlist;
             }
