@@ -22,9 +22,28 @@ Some text structures will be supported in future.
 
 ## Installation
 
+### Kinx 1.0.x
+
 * Install [Kinx](https://github.com/Kray-G/kinx) first.
 * Locate files of this project to the folder where Kinx was installed.
     * (detail description is under construction)
+
+### Kinx 1.1.x
+
+> Note that Kinx 1.1.0 is not released so far.
+
+* Install [Kinx](https://github.com/Kray-G/kinx) 1.1.0 or above first.
+* Install this `typesetting` package by the package manager.
+
+```
+$ kip install typesetting
+```
+
+Here are notes on using `kip`.
+
+* If Kinx was installed under the system directory on Linux, add `sudo` before `kip` to take an administration privilege.
+* If Kinx was installed viathe installer on Windows, launch a command prompt as an administrator and use a `kip` command, or installing a package will be failed.
+* If Kinx was installed via scoop on Windows, run `kinx --install-path` to set an execution path to the PATH environment at first.
 
 ## Example
 
