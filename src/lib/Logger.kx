@@ -2,6 +2,12 @@ using DateTime;
 
 namespace Typesetting {
 
+    var pkglibpath = __FILE__.replace("\\", "/").replace(new Regex("^" + $pkgpath.replace("\\", "/") + "/*"), "");
+    var [ pkgname, version ] = pkglibpath.split("/");
+    Typesetting.pkgpath = $pkgpath.replace("\\", "/") / pkgname / version;
+    Typesetting.pkgname = pkgname;
+    Typesetting.version = version;
+
     class LoggerImpl(opts_) {
         var writer_;
         var debugOutput_ = opts_.debug;

@@ -1,6 +1,6 @@
-using @typesetting(0.0.1).Typesetting;
-using @typesetting(0.0.1).reader.Markdown;
-using @typesetting(0.0.1).style.Styles;
+using @typesetting.Typesetting;
+using @typesetting.reader.Markdown;
+using @typesetting.style.Styles;
 
 var file = $$[1];
 if (!File.exists(file)) {

@@ -1,0 +1,15 @@
+using pkg.Develop;
+
+var pkgname = "typesetting-dev";
+var version = "0.0.2";
+
+new DevelopPackageUpdater(pkgname, version).update { &(this)
+    Directory.change("src") {
+        Directory.walk(".") {
+            @dircopy(_1, @root / _1.filename());
+        };
+    };
+    Directory.walk("docs") {
+        @dircopy(_1, @root / _1);
+    };
+};

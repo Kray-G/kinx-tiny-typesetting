@@ -1,0 +1,112 @@
+namespace Typesetting {
+
+    var fontMap_, fontPath_;
+    var fontObjSerif_, fontObjSans_, fontObjMonotype_;
+    var fontObjSerifBase_, fontObjSansBase_, fontObjMonotypeBase_;
+
+    Typesetting.loadFontMap = function() {
+        fontPath_ = 'C:/Windows/Fonts';
+        var path = fontPath_ / "fontmap.json";
+        if (!File.exists(path)) {
+            fontPath_ = Typesetting.pkgpath / 'etc/fonts';
+            path = fontPath_ / "fontmap.json";
+        }
+        if (!File.exists(path)) {
+            throw RuntimeException("No font file map found");
+        }
+        fontMap_ = JSON.parse(File.load(path));
+    };
+
+    Typesetting.loadFontOne = function(pdf, info) {
+        var path = (fontPath_ / info.file);
+        if (!File.exists(path)) {
+            path = ('C:/Windows/Fonts' / info.file);
+        }
+        if (!File.exists(path)) {
+            path = ('/usr/share/fonts/truetype' / info.file);
+        }
+        if (!File.exists(path)) {
+            throw RuntimeException("Cannot find the font file: " + info.file);
+        }
+        path = path.replace("\\", '/');
+        if (info.index.isDefined) {
+            return pdf.loadTTFontFromFile2(path, info.index, true);
+        }
+        return pdf.loadTTFontFromFile(path, true);
+    };
+
+    Typesetting.loadFonts = function(pdf) {
+        if (fontMap_.isUndefined) {
+            Typesetting.loadFontMap();
+
+            fontObjSerifBase_.type = "serif";
+            fontObjSerifBase_.file = fontMap_.default.serif.regular;
+            fontObjSerifBase_.regular = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.serif.regular), "UTF-8");
+            fontObjSerifBase_.bold = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.serif.bold), "UTF-8");
+            fontObjSerifBase_.italic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.serif.italic), "UTF-8");
+            fontObjSerifBase_.bolditalic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.serif.bolditalic), "UTF-8");
+            fontObjSerif_ = fontObjSerifBase_.regular;
+
+            fontObjSansBase_.type = "sans";
+            fontObjSansBase_.file = fontMap_.default.sans.regular;
+            fontObjSansBase_.regular = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.sans.regular), "UTF-8");
+            fontObjSansBase_.bold = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.sans.bold), "UTF-8");
+            fontObjSansBase_.italic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.sans.italic), "UTF-8");
+            fontObjSansBase_.bolditalic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.sans.bolditalic), "UTF-8");
+            fontObjSans_ = fontObjSansBase_.regular;
+
+            fontObjMonotypeBase_.type = "monotype";
+            fontObjMonotypeBase_.file = fontMap_.default.monotype.regular;
+            fontObjMonotypeBase_.regular = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.monotype.regular), "UTF-8");
+            fontObjMonotypeBase_.bold = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.monotype.bold), "UTF-8");
+            fontObjMonotypeBase_.italic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.monotype.italic), "UTF-8");
+            fontObjMonotypeBase_.bolditalic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.monotype.bolditalic), "UTF-8");
+            fontObjMonotype_ = fontObjMonotypeBase_.regular;
+        }
+    };
+
+    Typesetting.loadAdditionalLangFonts = function(pdf, lang) {
+        if (fontMap_[lang]) {
+            if (fontMap_[lang].isLoaded) {
+                return fontMap_[lang].bases;
+            }
+            var bases = [];
+            var fontObjSerifBase, fontObjSansBase, fontObjMonotypeBase;
+
+            fontObjSerifBase.type = "serif";
+            fontObjSerifBase_.file = fontMap_[lang].serif.regular;
+            fontObjSerifBase.regular = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].serif.regular), "UTF-8");
+            fontObjSerifBase.bold = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].serif.bold), "UTF-8");
+            fontObjSerifBase.italic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].serif.italic), "UTF-8");
+            fontObjSerifBase.bolditalic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].serif.bolditalic), "UTF-8");
+            bases.push(fontObjSerifBase);
+
+            fontObjSansBase.type = "sans";
+            fontObjSansBase.file = fontMap_[lang].sans.regular;
+            fontObjSansBase.regular = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].sans.regular), "UTF-8");
+            fontObjSansBase.bold = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].sans.bold), "UTF-8");
+            fontObjSansBase.italic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].sans.italic), "UTF-8");
+            fontObjSansBase.bolditalic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].sans.bolditalic), "UTF-8");
+            bases.push(fontObjSansBase);
+
+            fontObjMonotypeBase.type = "monotype";
+            fontObjMonotypeBase.file = fontMap_[lang].monotype.regular;
+            fontObjMonotypeBase.regular = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].monotype.regular), "UTF-8");
+            fontObjMonotypeBase.bold = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].monotype.bold), "UTF-8");
+            fontObjMonotypeBase.italic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].monotype.italic), "UTF-8");
+            fontObjMonotypeBase.bolditalic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].monotype.bolditalic), "UTF-8");
+            bases.push(fontObjMonotypeBase);
+
+            fontMap_[lang].isLoaded = true;
+            fontMap_[lang].bases = bases;
+            return bases;
+        }
+
+        return [];
+    };
+
+    Typesetting.getFontObjBase = function() {
+        return [ fontObjSerif_, fontObjSans_, fontObjMonotype_, fontObjSerifBase_, fontObjSansBase_, fontObjMonotypeBase_ ];
+    };
+
+} // namespace Typesetting

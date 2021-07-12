@@ -1,7 +1,4 @@
 using PdfCore;
-
-Typesetting.pkgpath = $pkgpath.replace("\\", "/") / "typesetting/0.0.1";
-
 using @typesetting.Logger;
 using @typesetting.LineBreak;
 using @typesetting.Measurement;
@@ -43,6 +40,7 @@ namespace Typesetting {
             info_.measure = measure;
             info_.writer = writer;
             info_.logger.setWriter(writer);
+            info_.logger.info("Package/Version: %s %s" % Typesetting.pkgname % Typesetting.version);
             var pageSize = measure.getPageSize();
             context_ = {
                 noIndent: false,

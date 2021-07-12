@@ -1,0 +1,298 @@
+namespace Typesetting {
+
+    class PdfDirectWriter(info_, pages_) {
+
+        var pdf_;
+        var urlEx_ = {}, urlExRect_;
+        var annot_ = [], prevAnnotX_;
+        var linkAnnot_ = info_.base.link.annotation;
+        var linkUrl_ = info_.base.link.url;
+        var inUnderline_ = false, prevUnderlineX_ = 0;
+        var underlineSize_ = info_.base.underlineSize_;
+        var adjust_ = 0;
+
+        private initialize() {
+            pdf_ = new Pdf();
+            pdf_.setCompressionMode(PDF_COMP_ALL);
+            pdf_.setInfoAttr(PDF_INFO_PRODUCER, "Kinx Tiny Typesetting");
+            if (info_.base.outline) {
+                pdf_.setPageMode(PDF_PAGE_MODE_USE_OUTLINE);
+            }
+
+            # Properties.
+            # PDF_INFO_AUTHOR
+            # PDF_INFO_CREATOR
+            # PDF_INFO_TITLE
+            # PDF_INFO_SUBJECT
+            # PDF_INFO_KEYWORDS
+        }
+
+        public getPdf() {
+            return pdf_;
+        }
+
+        public setAdjustment(adjust) {
+            adjust_ = adjust;
+        }
+
+        public setSize(page, pagesize, direction) {
+            page.setSize(pagesize, direction);
+        }
+
+        public setContentsPage(page, outline, y) {
+            dst = page.createDestination();
+            if (y && info_.base.toc.fitWidth) {
+                dst.setFitH(y);
+            }
+            outline.setDestination(dst);
+        }
+
+        public setFontAndSize(page, font, fontSize) {
+            page.setFontAndSize(font, fontSize);
+        }
+
+        public createOutline(pdf, parent, name, isOpened) {
+            var outline = pdf.createOutline(parent, name);
+            outline.setOpened(isOpened);
+            return outline;
+        }
+
+        private convColorCode(color) {
+            if (color.isArray) {
+                var l = color.length();
+                if (l == 4) {
+                    return color;
+                }
+                if (l == 3) {
+                    return Typesetting.Util.rgb2cmyk(...color);
+                }
+            }
+            if (color.isString) {
+                var cmyk = Typesetting.colormap[color].cmyk;
+                return [cmyk.c, cmyk.m, cmyk.y, cmyk.k];
+            }
+            return; // null
+        }
+
+        private setColor(page, color, bgcolor) {
+            color = convColorCode(color);
+            bgcolor = convColorCode(bgcolor ?? color);
+            page.setCMYKFill(...bgcolor);
+            page.setCMYKStroke(...color);
+        }
+
+        private drawLineImpl(page, left, top, width, height, lineWidth, color) {
+            color ??= [0, 0, 0, 1];
+            lineWidth ??= 0.5;
+            page.gSave();
+            page.setLineWidth(lineWidth || 1.0);
+            setColor(page, color);
+            page.moveTo(left, top);
+            page.lineTo(left + width, top - height);
+            page.stroke();
+            page.gRestore();
+        }
+
+        private drawBoxImpl(page, left, top, width, height, lineWidth, color, bgcolor) {
+            color ??= [0, 0, 0, 1];
+            page.gSave();
+            page.setLineWidth(lineWidth || 1.0);
+            setColor(page, color, bgcolor);
+            page.rectangle(left, top - height, width, height);
+            if (bgcolor.isDefined) {
+                page.fillStroke();
+            } else {
+                page.stroke();
+            }
+            page.gRestore();
+        }
+
+        public drawLine(page, left, top, width, height, lineWidth, color) {
+            left += adjust_;
+            drawLineImpl(page, left, top, width, height, lineWidth, color);
+        }
+
+        public drawBox(page, left, top, width, height, lineWidth, color, bgcolor) {
+            left += adjust_;
+            drawBoxImpl(page, left, top, width, height, lineWidth, color, bgcolor);
+        }
+
+        public writeColorText(page, x, y, color, text) {
+            page.gSave();
+            setColor(page, color);
+            page.beginText();
+            page.moveTextPos(x, y);
+            page.showText(text);
+            page.endText();
+            page.gRestore();
+        }
+
+        private updateUrlRect(page, value, x, y, width) {
+            if (urlEx_.x && urlEx_.y != y) {
+                var linew = urlEx_.x2 - urlEx_.x;
+                drawLineImpl(page, urlEx_.x, urlEx_.y - 1, linew, 0, linkUrl_.underlineSize) if (linkUrl_.underline);
+                urlExRect_.push({
+                    left:   urlEx_.x - 4,
+                    bottom: urlEx_.y + value.bottom - 2,
+                    right:  urlEx_.x2 + 4,
+                    top:    urlEx_.y + value.top + 2,
+                });
+                urlEx_ = { x: x, y: y, x2: x + width };
+            } else {
+                urlEx_.x2 = x + width;
+            }
+        }
+
+        public writeText(page, text, value, x, y, offsetY, width) {
+            x += adjust_;
+            var textcolor = value.color;
+            if (value.isLabel) {
+                value.xref.page = page.index;
+                value.xref.y = y;
+            }
+            var ay = y + offsetY;
+            if (value.startUrl) {
+                urlEx_ = { x: x, y: y, x2: x + width };
+                urlExRect_ = [];
+                var color = linkUrl_.color ?? textcolor ?? [0, 1, 1, 0];
+                page.gSave();
+                setColor(page, color);
+            }
+            if (value.startAnnot) {
+                annot_.push({
+                    left: x - 4,
+                    top: ay + value.bottom - 2,
+                    right: x + width + 4,
+                    bottom: ay + value.top + 2,
+                    page: page,
+                    value: value,
+                    ay: ay,
+                    y: value.annotPos.y,
+                });
+                writeColorText(page, x, ay, linkAnnot_.color ?? textcolor ?? [0, 1, 1, 0], text);
+            }
+            if (value.endAnnot || value.inAnnot) {
+                var annot = annot_[-1];
+                if (annot.ay == ay) {
+                    annot.right = x + width + 4;
+                } else {
+                    annot.right = prevAnnotX_;
+                    annot_.push({
+                        left: x - 4,
+                        top: ay + value.bottom - 2,
+                        right: x + width + 4,
+                        bottom: ay + value.top + 2,
+                        page: page,
+                        value: value,
+                        ay: ay,
+                        y: value.annotPos.y,
+                    });
+                }
+                writeColorText(page, x, ay, linkAnnot_.color ?? textcolor ?? [0, 1, 1, 0], text);
+            } else if (value.isUrl) {
+                var color = linkUrl_.color ?? textcolor ?? [0, 1, 1, 0];
+                page.gSave();
+                setColor(page, color);
+                drawLineImpl(page, x, ay - 1, width, 0, linkUrl_.underlineSize) if (linkUrl_.underline);
+                page.beginText();
+                page.moveTextPos(x, ay);
+                var tp = page.getCurrentTextPos();
+                page.showText(text);
+                var nx = page.getCurrentTextPos().x;
+                var rect = {
+                    left:   tp.x - 4,
+                    bottom: tp.y + value.bottom - 2,
+                    right:  nx + 4,
+                    top:    tp.y + value.top + 2,
+                };
+                var annot = page.createURILinkAnnot(rect, value.link);
+                annot.linkAnnot_SetBorderStyle(0, 0, 0);
+                page.endText();
+                page.gRestore();
+            } else if (value.endUrl) {
+                updateUrlRect(page, value, x, y, width);
+                var linew = urlEx_.x2 - urlEx_.x;
+                drawLineImpl(page, urlEx_.x, urlEx_.y - 1, linew, 0, linkUrl_.underlineSize) if (linkUrl_.underline);
+                page.beginText();
+                page.moveTextPos(x, ay);
+                page.showText(text);
+                urlExRect_.push({
+                    left:   urlEx_.x - 4,
+                    bottom: urlEx_.y + value.bottom - 2,
+                    right:  urlEx_.x2 + 4,
+                    top:    urlEx_.y + value.top + 2,
+                });
+                urlExRect_.each { &(rect)
+                    var annot = page.createURILinkAnnot(rect, value.link);
+                    annot.linkAnnot_SetBorderStyle(0, 0, 0);
+                };
+                page.endText();
+                page.gRestore();
+                urlEx_ = {};
+            } else {
+                updateUrlRect(page, value, x, y, width);
+                if (textcolor) {
+                    page.gSave();
+                    setColor(page, textcolor);
+                }
+                if (value.underline) {
+                    var ax = inUnderline_ ? prevUnderlineX_ : x;
+                    var wx = (x + width) - ax;
+                    if (wx < 0) {
+                        drawLineImpl(page, x, ay - 1, width, 0, underlineSize_);
+                    } else {
+                        drawLineImpl(page, ax, ay - 1, wx, 0, underlineSize_);
+                    }
+                    prevUnderlineX_ = x + width;
+                    inUnderline_ = true;
+                } else {
+                    inUnderline_ = false;
+                }
+                page.beginText();
+                page.moveTextPos(x, ay);
+                page.showText(text);
+                page.endText();
+                if (textcolor) {
+                    page.gRestore();
+                }
+            }
+            prevAnnotX_ = x + width + 4;
+        }
+
+        public drawImage(page, image, x, y, width, height) {
+            x += adjust_;
+            page.drawImage(image, x, y, width, height);
+        }
+
+        public drawFootnoteLine(page, x1, y1, x2, y2, lineWidth, color) {
+            x1 += adjust_;
+            page.gSave();
+            page.setLineWidth(0.3);
+            setColor(page, color);
+            page.moveTo(x1, y1);
+            page.lineTo(x2, y2);
+            page.stroke();
+            page.gRestore();
+        }
+
+        public flushAnnot() {
+            annot_.each { &(annot)
+                var annotPage = Integer.parseInt(annot.value.annotPage);
+                var y = annot.value.annotPos.y;
+                var dstpage = pages_[annotPage];
+                if (!dstpage) {
+                    return;
+                }
+                var dst = dstpage.createDestination();
+                if (y && info_.base.toc.fitWidth) {
+                    dst.setFitH(y);
+                }
+                var page = annot.page;
+                var annot = page.createLinkAnnot(annot, dst);
+                annot.linkAnnot_SetBorderStyle(0, 0, 0);
+            };
+        }
+
+    }
+
+} // namespace Typesetting

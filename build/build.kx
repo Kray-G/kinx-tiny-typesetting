@@ -9,7 +9,7 @@ var zip = new Zip($pwd / "package.zip", File.WRITE);
 
 Directory.change("src") {
     Directory.walk(".") {
-        if (File.isDirectory(_1)) {
+        if (_1 != "dev" && File.isDirectory(_1)) {
             System.println("Adding a directory : ", _1);
             zip.addFile(_1);
         }
