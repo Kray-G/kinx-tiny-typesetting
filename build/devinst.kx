@@ -1,6 +1,6 @@
 using pkg.Develop;
 
-var pkgname = "typesetting-dev";
+var pkgname = "typesetting";
 var version = "0.0.2";
 
 new DevelopPackageUpdater(pkgname, version).update { &(this)
