@@ -42,7 +42,7 @@ namespace Typesetting {
         }
 
         public loadAdditionalFonts(lang) {
-            return Typesetting.loadAdditionalLangFonts(pdf_, lang);
+            return writer_.loadAdditionalFonts(lang);
         }
 
         public loadFontFile(name, type, shape, filepath, index) {
@@ -50,15 +50,7 @@ namespace Typesetting {
             # type is 'serif', 'sans', or 'monotype'.
             # shape is 'regular', 'bold', 'italic', or 'bolditalic'.
             if (fonts_[name].isUndefined) {
-                var info = {
-                    file: filepath,
-                    index: index,
-                };
-                fonts_[name] = {
-                    type: type,
-                    shape: shape,
-                    font: pdf_.getFont(Typesetting.loadFontOne(pdf_, info), "UTF-8"),
-                };
+                fonts_[name] = writer_.loadFontFile(name, type, shape, filepath, index);
             }
             return fonts_[name];
         }
@@ -388,9 +380,9 @@ namespace Typesetting {
             ;
         }
 
-        private writeText(page, x, y, text, width) {
+        private writeText(page, x, y, text, width, value) {
             if (x >= 0 && y >= 0 && text) {
-                writer_.writeText(page, text, null, x, y, 0, width);
+                writer_.writeText(page, text, value, x, y, 0, width);
             }
         }
 
@@ -560,7 +552,9 @@ namespace Typesetting {
             } else {
                 page_ = pdf_.addPage();
             }
+            page_.text = [];
             page_.index = @pages.length();
+            writer_.setCurrentPage(page_);
 
             writer_.setSize(page_, pagesize_, direction_);
             width_ = page_.getWidth();
@@ -1018,8 +1012,20 @@ namespace Typesetting {
             };
             info_.logger.info("Finished to flush headers and footers.");
 
-            pdf_.saveToFile(file);
-            info_.logger.info("Finished all.");
+            try {
+                pdf_.saveToFile("_kittytemp.pdf");
+                if (File.exists(file) && !File.remove(file)) {
+                    info_.logger.error("Saving file was failed, temporary `_kittytemp.pdf` was created.");
+                } else {
+                    File.rename("_kittytemp.pdf", file);
+                    info_.logger.info("Finished all.");
+                }
+            } catch (e) {
+                info_.logger.error("%{e.what()} occured, temporary `_kittytemp.pdf` was created.");
+                info_.logger.error("Saving file was failed, temporary `_kittytemp.pdf` was created.");
+            }
+
+            writer_.finalize();
         }
     }
 

@@ -21,8 +21,10 @@ namespace Typesetting {
         var fontObjSerif_, fontObjSans_;
         var fontObjMonotype_, fontObjMonotypeBase_;
         var core_ = {};
+        var tmr_;
 
         private initialize() {
+            tmr_ = new SystemTimer();
             if (style_.create.isFunction) {
                 style_ = new style_();
             }
@@ -350,7 +352,7 @@ namespace Typesetting {
         }
 
         public report() {
-            info_.logger.report();
+            info_.logger.report(tmr_);
         }
 
         public save(file) {

@@ -27,11 +27,13 @@ namespace Typesetting {
                 var shadowColor = context.code.shadowColor ?? info.base.code.shadowColor;
 
                 [opts_, code_] = core.util.makeOption(opts_, code_, false);
+                var fontBgColor = context.font.bgcolor;
                 var fontColor = context.font.color;
                 var fontObj = context.font.fontObj;
                 var fontObjBase = context.font.fontObjBase;
                 core.fontType("Monotype");
                 context.font.color = opts_.color;
+                context.font.bgcolor = opts_.bgcolor;
 
                 var writer = info.writer;
                 var margin = writer.getMargin();
@@ -87,6 +89,7 @@ namespace Typesetting {
                         var lb = writer.getPos().y;
                         writer.drawBox(left, lb, linelength, lineFeedWidthBase, lineWidth, bgColor, bgColor);
                     }
+
                     if (opts_.lineNumber) {
                         var num = "" + (i+1);
                         var x = lbase - info.measure.textWidth(fontObj, numberSize, num);
@@ -150,6 +153,7 @@ namespace Typesetting {
                 context.font.fontObjBase = fontObjBase;
                 context.font.fontObj = fontObj;
                 context.font.color = fontColor;
+                context.font.bgcolor = fontBgColor;
             }
         }
 

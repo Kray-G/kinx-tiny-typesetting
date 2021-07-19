@@ -35,32 +35,39 @@ namespace Typesetting {
         return pdf.loadTTFontFromFile(path, true);
     };
 
+    function getFontObject(fonttype, pdf, font, encoding) {
+        var obj = pdf.getFont(font, encoding);
+        obj.fonttype = fonttype;
+        obj.info = font.info;
+        return obj;
+    }
+
     Typesetting.loadFonts = function(pdf) {
         if (fontMap_.isUndefined) {
             Typesetting.loadFontMap();
 
             fontObjSerifBase_.type = "serif";
             fontObjSerifBase_.file = fontMap_.default.serif.regular;
-            fontObjSerifBase_.regular = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.serif.regular), "UTF-8");
-            fontObjSerifBase_.bold = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.serif.bold), "UTF-8");
-            fontObjSerifBase_.italic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.serif.italic), "UTF-8");
-            fontObjSerifBase_.bolditalic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.serif.bolditalic), "UTF-8");
+            fontObjSerifBase_.regular = getFontObject("regular", pdf, Typesetting.loadFontOne(pdf, fontMap_.default.serif.regular), "UTF-8");
+            fontObjSerifBase_.bold = getFontObject("bold", pdf, Typesetting.loadFontOne(pdf, fontMap_.default.serif.bold), "UTF-8");
+            fontObjSerifBase_.italic = getFontObject("italic", pdf, Typesetting.loadFontOne(pdf, fontMap_.default.serif.italic), "UTF-8");
+            fontObjSerifBase_.bolditalic = getFontObject("bolditalic", pdf, Typesetting.loadFontOne(pdf, fontMap_.default.serif.bolditalic), "UTF-8");
             fontObjSerif_ = fontObjSerifBase_.regular;
 
             fontObjSansBase_.type = "sans";
             fontObjSansBase_.file = fontMap_.default.sans.regular;
-            fontObjSansBase_.regular = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.sans.regular), "UTF-8");
-            fontObjSansBase_.bold = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.sans.bold), "UTF-8");
-            fontObjSansBase_.italic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.sans.italic), "UTF-8");
-            fontObjSansBase_.bolditalic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.sans.bolditalic), "UTF-8");
+            fontObjSansBase_.regular = getFontObject("regular", pdf, Typesetting.loadFontOne(pdf, fontMap_.default.sans.regular), "UTF-8");
+            fontObjSansBase_.bold = getFontObject("bold", pdf, Typesetting.loadFontOne(pdf, fontMap_.default.sans.bold), "UTF-8");
+            fontObjSansBase_.italic = getFontObject("italic", pdf, Typesetting.loadFontOne(pdf, fontMap_.default.sans.italic), "UTF-8");
+            fontObjSansBase_.bolditalic = getFontObject("bolditalic", pdf, Typesetting.loadFontOne(pdf, fontMap_.default.sans.bolditalic), "UTF-8");
             fontObjSans_ = fontObjSansBase_.regular;
 
             fontObjMonotypeBase_.type = "monotype";
             fontObjMonotypeBase_.file = fontMap_.default.monotype.regular;
-            fontObjMonotypeBase_.regular = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.monotype.regular), "UTF-8");
-            fontObjMonotypeBase_.bold = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.monotype.bold), "UTF-8");
-            fontObjMonotypeBase_.italic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.monotype.italic), "UTF-8");
-            fontObjMonotypeBase_.bolditalic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_.default.monotype.bolditalic), "UTF-8");
+            fontObjMonotypeBase_.regular = getFontObject("regular", pdf, Typesetting.loadFontOne(pdf, fontMap_.default.monotype.regular), "UTF-8");
+            fontObjMonotypeBase_.bold = getFontObject("bold", pdf, Typesetting.loadFontOne(pdf, fontMap_.default.monotype.bold), "UTF-8");
+            fontObjMonotypeBase_.italic = getFontObject("italic", pdf, Typesetting.loadFontOne(pdf, fontMap_.default.monotype.italic), "UTF-8");
+            fontObjMonotypeBase_.bolditalic = getFontObject("bolditalic", pdf, Typesetting.loadFontOne(pdf, fontMap_.default.monotype.bolditalic), "UTF-8");
             fontObjMonotype_ = fontObjMonotypeBase_.regular;
         }
     };
@@ -75,26 +82,26 @@ namespace Typesetting {
 
             fontObjSerifBase.type = "serif";
             fontObjSerifBase_.file = fontMap_[lang].serif.regular;
-            fontObjSerifBase.regular = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].serif.regular), "UTF-8");
-            fontObjSerifBase.bold = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].serif.bold), "UTF-8");
-            fontObjSerifBase.italic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].serif.italic), "UTF-8");
-            fontObjSerifBase.bolditalic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].serif.bolditalic), "UTF-8");
+            fontObjSerifBase.regular = getFontObject("regular", pdf, Typesetting.loadFontOne(pdf, fontMap_[lang].serif.regular), "UTF-8");
+            fontObjSerifBase.bold = getFontObject("bold", pdf, Typesetting.loadFontOne(pdf, fontMap_[lang].serif.bold), "UTF-8");
+            fontObjSerifBase.italic = getFontObject("italic", pdf, Typesetting.loadFontOne(pdf, fontMap_[lang].serif.italic), "UTF-8");
+            fontObjSerifBase.bolditalic = getFontObject("bolditalic", pdf, Typesetting.loadFontOne(pdf, fontMap_[lang].serif.bolditalic), "UTF-8");
             bases.push(fontObjSerifBase);
 
             fontObjSansBase.type = "sans";
             fontObjSansBase.file = fontMap_[lang].sans.regular;
-            fontObjSansBase.regular = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].sans.regular), "UTF-8");
-            fontObjSansBase.bold = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].sans.bold), "UTF-8");
-            fontObjSansBase.italic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].sans.italic), "UTF-8");
-            fontObjSansBase.bolditalic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].sans.bolditalic), "UTF-8");
+            fontObjSansBase.regular = getFontObject("regular", pdf, Typesetting.loadFontOne(pdf, fontMap_[lang].sans.regular), "UTF-8");
+            fontObjSansBase.bold = getFontObject("bold", pdf, Typesetting.loadFontOne(pdf, fontMap_[lang].sans.bold), "UTF-8");
+            fontObjSansBase.italic = getFontObject("italic", pdf, Typesetting.loadFontOne(pdf, fontMap_[lang].sans.italic), "UTF-8");
+            fontObjSansBase.bolditalic = getFontObject("bolditalic", pdf, Typesetting.loadFontOne(pdf, fontMap_[lang].sans.bolditalic), "UTF-8");
             bases.push(fontObjSansBase);
 
             fontObjMonotypeBase.type = "monotype";
             fontObjMonotypeBase.file = fontMap_[lang].monotype.regular;
-            fontObjMonotypeBase.regular = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].monotype.regular), "UTF-8");
-            fontObjMonotypeBase.bold = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].monotype.bold), "UTF-8");
-            fontObjMonotypeBase.italic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].monotype.italic), "UTF-8");
-            fontObjMonotypeBase.bolditalic = pdf.getFont(Typesetting.loadFontOne(pdf, fontMap_[lang].monotype.bolditalic), "UTF-8");
+            fontObjMonotypeBase.regular = getFontObject("regular", pdf, Typesetting.loadFontOne(pdf, fontMap_[lang].monotype.regular), "UTF-8");
+            fontObjMonotypeBase.bold = getFontObject("bold", pdf, Typesetting.loadFontOne(pdf, fontMap_[lang].monotype.bold), "UTF-8");
+            fontObjMonotypeBase.italic = getFontObject("italic", pdf, Typesetting.loadFontOne(pdf, fontMap_[lang].monotype.italic), "UTF-8");
+            fontObjMonotypeBase.bolditalic = getFontObject("bolditalic", pdf, Typesetting.loadFontOne(pdf, fontMap_[lang].monotype.bolditalic), "UTF-8");
             bases.push(fontObjMonotypeBase);
 
             fontMap_[lang].isLoaded = true;

@@ -31,6 +31,25 @@ namespace Typesetting {
             return pdf_;
         }
 
+        public loadFontFile(name, type, shape, filepath, index) {
+            var info = {
+                file: filepath,
+                index: index,
+            };
+            return {
+                type: type,
+                shape: shape,
+                font: pdf_.getFont(Typesetting.loadFontOne(pdf_, info), "UTF-8"),
+            };
+        }
+
+        public loadAdditionalFonts(lang) {
+            return Typesetting.loadAdditionalLangFonts(pdf_, lang);
+        }
+
+        public setCurrentPage(page) {
+        }
+
         public setAdjustment(adjust) {
             adjust_ = adjust;
         }
@@ -146,6 +165,7 @@ namespace Typesetting {
         public writeText(page, text, value, x, y, offsetY, width) {
             x += adjust_;
             var textcolor = value.color;
+            var bgcolor = value.bgcolor;
             if (value.isLabel) {
                 value.xref.page = page.index;
                 value.xref.y = y;
@@ -291,6 +311,10 @@ namespace Typesetting {
                 var annot = page.createLinkAnnot(annot, dst);
                 annot.linkAnnot_SetBorderStyle(0, 0, 0);
             };
+        }
+
+        public finalize() {
+            ;
         }
 
     }

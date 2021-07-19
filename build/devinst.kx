@@ -3,13 +3,13 @@ using pkg.Develop;
 var pkgname = "typesetting";
 var version = "0.0.2";
 
-new DevelopPackageUpdater(pkgname, version).update { &(this)
+new DevelopPackageUpdater(pkgname, version).update { &(util)
     Directory.change("src") {
         Directory.walk(".") {
-            @dircopy(_1, @root / _1.filename());
+            util.dircopy(_1, util.root / _1.filename());
         };
     };
     Directory.walk("docs") {
-        @dircopy(_1, @root / _1);
+        util.dircopy(_1, util.root / _1);
     };
 };
