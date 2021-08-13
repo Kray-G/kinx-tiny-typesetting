@@ -1,23 +1,15 @@
-#!/usr/bin/kinx
+using pkg.Develop;
 
-if (!File.exists("src")) {
-    System.println("Execute this under the top directory of typesetting.");
-    return 1;
-}
+var pkgname = "typesetting";
+var version = "0.0.2";
 
-var zip = new Zip($pwd / "package.zip", File.WRITE);
-
-Directory.change("src") {
-    Directory.walk(".") {
-        if (_1 != "dev" && File.isDirectory(_1)) {
-            System.println("Adding a directory : ", _1);
-            zip.addFile(_1);
-        }
+new PackageUpdater($$, pkgname, version).update { &(util)
+    Directory.change("src") {
+        Directory.walk(".") {
+            util.dircopy(_1, util.root / _1.filename());
+        };
     };
-};
-Directory.walk("docs") {
-    if (File.isDirectory(_1)) {
-        System.println("Adding a directory : ", _1);
-        zip.addFile(_1);
-    }
+    Directory.walk("docs") {
+        util.dircopy(_1, util.root / _1);
+    };
 };
