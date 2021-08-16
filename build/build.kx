@@ -9,7 +9,5 @@ new PackageUpdater($$, pkgname, version).update { &(util)
             util.dircopy(_1, util.root / _1.filename());
         };
     };
-    Directory.walk("docs") {
-        util.dircopy(_1, util.root / _1);
-    };
+    util.dircopy("docs", util.root / "docs");
 };
