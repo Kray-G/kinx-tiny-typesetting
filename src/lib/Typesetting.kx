@@ -164,7 +164,7 @@ namespace Typesetting {
         }
 
         public getStyle() {
-            return style_;
+            return info_.base;
         }
 
         public setStyle(name, value) {
@@ -175,7 +175,11 @@ namespace Typesetting {
                 style[k] ??= {};
                 style = style[k];
             };
-            if (style[lastkey]) {
+            if (value == "true") {
+                style[lastkey] = true;
+            } else if (value == "false") {
+                style[lastkey] = false;
+            } else {
                 style[lastkey] = value;
             }
         }

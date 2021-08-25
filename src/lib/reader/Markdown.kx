@@ -386,7 +386,7 @@ namespace Typesetting {
             return r;
         }
         private makeDocument() {
-            opts_.style ??= "BookA4";
+            opts_.style ??= "ArticleA4";
             style_ = Typesetting.Style[opts_.style];
             doc_ = new Typesetting.Document(style_, {
                 toc: opts_.toc,
@@ -397,12 +397,20 @@ namespace Typesetting {
                 logger: logger_,
             });
             style_ = doc_.getStyle();
+            logger_.info("The style is " + opts_.style);
+            if (!opts_.multibytefont) {
+                opts_.multibytefont = style_.multibytefont;
+            }
+            if (opts_.multibytefont) {
+                logger_.info("Multibyte Font Type = '%{opts_.multibytefont}'");
+            }
             logger_.info({ toc: opts_.toc, lot: opts_.lot, lof: opts_.lof });
             inline_.setDocument(doc_);
             if (opts_.multibytefont.isString) {
                 doc_.setMultibyteFont(opts_.multibytefont);
             }
 
+            var dateFormat = opts_.dateFormat ? opts_.dateFormat : "%MMMM% %D%, %YYYY%";
             if (title_) {
                 output_.push(&() => {
                     var title = new Typesetting.Component.Title();
@@ -419,7 +427,11 @@ namespace Typesetting {
                         logger_.info({ subtitle: text });
                         title.setSubtitle(text, Double.parseDouble(opts_.subtitleSize));
                     }
-                    if (opts_.date) {
+                    if (opts_.date[0].value) {
+                        var dtstr = opts_.date[0].value.subString(1).trim();
+                        if (dtstr == "%TODAY%") {
+                            opts_.date[0].value = "% " + DateTime.now().format(dateFormat);
+                        }
                         text = inline_.makeInlineText(opts_.date).subString(1).trim();
                         logger_.info({ date: text });
                         title.setDate(text);
@@ -438,7 +450,11 @@ namespace Typesetting {
                 return;
             }
             var checker = paramsText.split(':');
-            var res = { syntax: checker[0], lineNumber: true, box: Typesetting.BOX_SHADOW };
+            var res = {
+                syntax: checker[0],
+                lineNumber: style_.code.lineNumber ?? true,
+                box: style_.code.box.isString ? (Typesetting[style_.code.box] ?? Typesetting.BOX_SHADOW) : Typesetting.BOX_SHADOW
+            };
             if (checker.length() > 1) {
                 var params = checker[1];
                 params.split(',').each { &(param)

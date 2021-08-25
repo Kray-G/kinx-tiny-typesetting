@@ -19,6 +19,7 @@ namespace Style {
         @style.image.label = "図";
         @style.image.fulllabel = "図";
         @style.chapter.style = "StandardBook";
+        @style.multibytefont = 'jp';
     }
 
 } # namespace Style
