@@ -49,7 +49,7 @@ but it is provided as a small system with limited features.
 Being huge of \\LaTeX system causes a complexibility of an installation.
 Besides, there are multiple distributions to provide many functionality of \\TeX and \\LaTeX.
 That is the reason why people have to think first what distribution should be used.
-Everybody can use KiTTy soon because KiTTy is included in Kinx as a standard library,
+Everybody can use KiTTy with Kinx soon, because KiTTy has been already distributed as a Kinx package named as Kinx Tiny Typesetting.
 
 Only one cons point is that limited features[^1] are provided.
 And also the compilation speed is *slow*.
@@ -177,105 +177,58 @@ Therefore you can use both without problems.
 
 ## Installation
 
-There are 2 steps to install it.
+KiTTy has been distributed as a Kinx package named as Kinx Tiny Typesetting.
+Therefore, there are 2 steps to install it.
 
 1. Install Kinx
 2. Install KiTTy package
 
-### Linux
+### Install Kinx
 
-Download the following modules first on Linux.
-The version `v0.15.2` is the version which includes KiTTy library officially.
-When the latest version is different, rewrite the version number and do it.
-Make the work directory and change the directory.
+At first, you need to install Kinx.
 
-```console
-$ mkdir temp
-$ cd temp
-```
+#### Windows
 
-Download Kinx module and extract it first,
-and then download KiTTy package and extract it.
+You can use Scoop to install Kinx on Windows.
 
 ```console
-$ curl -L \
-    https://github.com/Kray-G/kinx/releases/download/v0.15.2/package_linux-amd64.tar.gz \
-    --output package_linux-amd64.tar.gz
-$ tar -xvf package_linux-amd64.tar.gz
-$ curl -L \
-    https://github.com/Kray-G/kinx/releases/download/v0.15.2/package_kitty.zip \
-    --output package_kitty.zip
-$ unzip package_kitty.zip
+$ scoop bucket add kinx https://github.com/Kray-G/kinx # only needed the first time
+$ scoop install kinx
 ```
 
-You will find the folder of the name of the version number,
-and move into it and execute an `install.sh` command.
+Register the bucket URL at first. This registration is needed at the first time only.
+If the bucket were registered, you could install Kinx by the command of `kip install Kinx`.
+
+#### Linux
+
+On Linux(Ubuntu), download a `.deb` file from [Relases](https://github.com/Kray-G/kinx/releases) page first.
+After that, move to the directory where you downloaded the file, and install it as below.
 
 ```console
-$ cd v0.15.2
-$ sudo ./install.sh
+$ sudo apt install ./kinx_1.1.0-0_amd64.deb
 ```
 
-That is all for installation.
-Let\\apos{}s confirm the location to be installed.
+This is an example when you install the version 1.1.0.
+The file name includes a version number, so install the version which you need.
+
+### Install Kinx Tiny Typwsetting Package
+
+#### Windows
+
+To install a Kinx package, use the `kip` command.
+By executing it as below on a command prompt, you can install the latest package automatically.
 
 ```console
-$ which kxkitty
-/usr/bin/kxkitty
+$ kip install typesetting
 ```
 
-### Windows
+#### Linus
 
-Download 2 latest modules from \\url\[https://github.com/Kray-G/kinx/releases\]{Release Page} when it is Windows.
-
-*   package_win64.zip
-*   package_kitty.zip
-
-Extract each, and then copy files in `package_kitty.zip` to `lib` folder[^winbuild].
-
-> \\noindent The `fonts` and `phantomjs` folder should be right under `lib` folder.
-> Please note that the files in an archive file might not be that structure.
-
-[^winbuild]: The installer for Windows is now not provided yet, but it will be prepared in the future.
-
-## Build
-
-You do not have to build it usually, you can use a prebuilt modules
-following the procedure of ''\\nameref{Installation}''.
-If you dare to build it, you can do it by the procedure as follows.
-
-### Linux
-
-Clone it from Github, and do `make`.
+It is almost same as Windows, but you need an administrator privilege on Linux. Use the `sudo` command if necessary.
 
 ```console
-$ git clone https://github.com/Kray-G/kinx.git
-$ cd kinx
-$ make
+$ sudo kip install typesetting
 ```
-
-Install it.
-
-```console
-$ git clone https://github.com/Kray-G/kinx.git
-$ cd kinx
-$ sudo make install
-$ sudo make kitty-install
-```
-
-### Windows
-
-Clone it from Github, and do `make`.
-
-```console
-$ git clone https://github.com/Kray-G/kinx.git
-$ cd kinx
-$ make.cmd
-```
-
-Now no installer has been provided,
-but you can use this system in the build environment.
-Use the system in the build environment.
 
 ## hello, world
 
@@ -286,8 +239,6 @@ Create the following text and save it as the name of `helloworld.md`.
 % Your name
 % October 7, 2020
 
-<param style="ArticleA4"/>
-
 # Greeting
 hello, world
 ```
@@ -297,9 +248,6 @@ Execute `kxkitty` command as below, and `helloworld.pdf` will be generated.
 ```console
 $ kxkitty helloworld.md
 ```
-
-By the way, now you need write the document as above,
-but I will plan that it can be a little more simple document.
 
 # Features Overview
 
@@ -1513,6 +1461,7 @@ For example, you can write `\\noindent{}`.
 | `\KaTeX`                   | \\KaTeX logo will be shown.                                                                       |
 | `\noindent`                | Indentation will be erased. The paragraph without indentation will be generated.                  |
 | `\apos`                    | Apostrophe will be shown.                                                                         |
+| `\copyright`               | Copyright (\\copyright) will be shown.                                                            |
 | `\hs`                      | A space, which width is the width of a small i, will be shown.                                    |
 | `\hspace{width}`           | To change the X position by the value of `width`. To move to the right by a plus value.           |
 | `\vspace{height}`          | To change the Y position by the value of `height`. To move to the down by a plus value.           |

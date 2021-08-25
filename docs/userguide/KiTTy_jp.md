@@ -51,8 +51,8 @@ KiTTy も \\LaTeX と同じ目的を持つ組版システムですが、
 \\LaTeX の巨大さは、インストールの複雑さにもつながります。
 \\TeX、\\LaTeX では様々な機能を提供するためにディストリビューションそのものが複数存在しています。
 それにより、ユーザーはまずどのディストリビューションを使うべきかで悩むことになります。
-KiTTy は、Kinx パッケージに標準で組み込まれており、
-Kinx をインストールすることですぐに使えるようになります。
+KiTTy は、Kinx 用のパッケージ（Kinx Tiny Typesetting）として単独で配布されており、
+Kinx と共にすぐに使えるようになります。
 
 ただし、小さく、そして簡単に使える代わりにトレードオフとして限られた機能[^1]しか提供されないといった欠点があります。
 また、組版スピードは**非常に遅い**です。
@@ -181,105 +181,60 @@ KiTTy を実際に始めるための準備と、
 
 ## インストール
 
-インストールは以下の 2 ステップを実施します。
+KiTTy は現在 Kinx Tiny Typesetting という Kinx のパッケージとして配布されています。
+そのため、インストールは以下の 2 ステップを実施します。
 
 1. Kinx のインストール
-2. KiTTy 追加モジュールのインストール
+2. Kinx Tiny Typesetting パッケージのインストール 
 
-### Linux
+### Kinx のインストール
 
-Linux では以下のようにモジュールをダウンロードします。
-`v0.15.2` は KiTTy ライブラリが正式に追加されたバージョンです。
-最新バージョンを使用する場合は書き換えてください。
-ワークディレクトリを作成し、移動してください。
+まずはじめに、Kinx のインストールを行います。
 
-```console
-$ mkdir temp
-$ cd temp
-```
+#### Windows
 
-最初に kinx モジュールをダウンロードし展開し、
-次に KiTTy パッケージをダウンロードして展開します。
+Windows では Scoop を使います。
+以下のようにコマンドラインから実行します。
 
 ```console
-$ curl -L \
-    https://github.com/Kray-G/kinx/releases/download/v0.15.2/package_linux-amd64.tar.gz \
-    --output package_linux-amd64.tar.gz
-$ tar -xvf package_linux-amd64.tar.gz
-$ curl -L \
-    https://github.com/Kray-G/kinx/releases/download/v0.15.2/package_kitty.zip \
-    --output package_kitty.zip
-$ unzip package_kitty.zip
+$ scoop bucket add kinx https://github.com/Kray-G/kinx
+$ scoop install kinx
 ```
 
-展開するとバージョン番号のフォルダができますので、
-移動して `install.sh` コマンドを実行します。
+まず Kinx 用 Bucket の URL を登録します。この登録は最初に 1 度だけ必要です。
+Bucket が登録されていれば、`scoop install kinx` コマンドでインストールできます。
+
+#### Linux
+
+Linux(Ubuntu) では、まず [Relases](https://github.com/Kray-G/kinx/releases) ページから `.deb` ファイルをダウンロードします。
+ダウンロードしたディレクトリに移動し、次のようにインストールします。
 
 ```console
-$ cd v0.15.2
-$ sudo ./install.sh
+$ sudo apt install ./kinx_1.1.0-0_amd64.deb
 ```
 
-これでインストールは完了です。
-実行フィルの位置を確認してみましょう。
+ここでは v1.1.0 をインストールする例です。
+ファイル名にバージョン番号が含まれていますので、必要なバージョンをインストールしてください。
+
+### Kinx Tiny Typwsetting パッケージのインストール
+
+#### Windows
+
+Kinx のパッケージをインストールするには `kip` コマンドを使用します。
+コマンドプロンプトで以下のように実行することで、自動的に最新版数のパッケージがインストールされます。
 
 ```console
-$ which kxkitty
-/usr/bin/kxkitty
+$ kip install typesetting
 ```
 
-### Windows
+#### Linus
 
-Windows では \\url\[https://github.com/Kray-G/kinx/releases\]{Release ページ}から最新のパッケージ（以下 2 点）をダウンロードします。
-
-*   package_win64.zip
-*   package_kitty.zip
-
-それぞれ展開し、`package_kitty.zip` の中身を lib フォルダ配下にコピーします[^winbuild]。
-
-> \\noindent その際、lib 配下に fonts、phantomjs フォルダが配置されるようにしてください。
-> 圧縮ファイル内のファイル構成が必ずしもそうなっていない可能性があります。
-
-[^winbuild]: 現時点でインストーラは用意できていませんが、将来的に Windows インストーラを用意する予定です。
-
-## ビルド
-
-通常、ビルドから実施する必要はありません。
-既にビルドされた実行モジュールが提供されており、手順にしたがってインストールを実施することで本システムを利用することができます。
-あえてビルドから実行したい、といった場合は以下の手順によってビルドを実施できます。
-
-### Linux
-
-Github よりクローンし、make します。
+Linux でも Windows と概ね同じですが、Linux では管理者権限が必要です。
+必要に応じて `sudo` コマンドを使用してください。
 
 ```console
-$ git clone https://github.com/Kray-G/kinx.git
-$ cd kinx
-$ make
+$ sudo kip install typesetting
 ```
-
-インストールします。
-
-```console
-$ git clone https://github.com/Kray-G/kinx.git
-$ cd kinx
-$ sudo make install
-$ sudo make kitty-install
-```
-
-### Windows
-
-Github よりクローンし、make します。
-
-```console
-$ git clone https://github.com/Kray-G/kinx.git
-$ cd kinx
-$ make.cmd
-```
-
-特に現在はインストール用のコマンドを用意していませんが、
-ビルドした環境で使用可能です。
-ビルドした環境でご使用ください。
 
 ## hello, world
 
@@ -290,8 +245,6 @@ $ make.cmd
 % Your name
 % October 7, 2020
 
-<param style="ArticleA4"/>
-
 # Greeting
 hello, world
 ```
@@ -301,9 +254,6 @@ hello, world
 ```console
 $ kxkitty helloworld.md
 ```
-
-なお、現在はサンプル程度の記載が必要ですが、
-もう少しシンプルなサンプルを提示できるよう改善する予定です。
 
 # 機能概要
 
@@ -1530,6 +1480,7 @@ Markdown 記法の中に、HTML で記載するコマンドがいくつか存在
 | `\KaTeX`                   | \\KaTeX のロゴを出力する。                                                                      |
 | `\noindent`                | インデント処理を打ち消す。インデントしないパラグラフを生成する。                                |
 | `\apos`                    | アポストロフィーを出力する。                                                                    |
+| `\copyright`               | コピーライト（\\copyright）を出力する。                                                         |
 | `\hs`                      | 区切りスペース（小文字 i の幅）のサイズ分の空白を出力する。                                     |
 | `\hspace{width}`           | `width` で指定された幅（単位指定可）分 X 座標を変更する（プラスの値で右方向）。                 |
 | `\vspace{height}`          | `height` で指定された高さ（単位指定可）分 Y 座標を変更する（プラスの値で下方向）。              |
