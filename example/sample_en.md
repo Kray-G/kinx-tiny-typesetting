@@ -5,6 +5,7 @@
 <param style="ArticleA4"/>
 <style-info name="code.lineNumber" value="false"/>
 <style-info name="code.box" value="BOX_NORMAL"/>
+<toc />
 
 # Overview
 
@@ -29,8 +30,8 @@ If you want to use it in the independent line, use <backq3 /> with `math` as bel
 By this manner, you can see mathematical expressions as a big size in the independent line.
 
 In fact, KiTTy has \\KaTeX inside.
-Thereby, all of mathematical expressions that \\KaTeX can present is available.
-The ability to present a beautiful mathematical expression allows for expressive writing.
+Thereby, all of mathematical expressions that \\KaTeX can do is available.
+To present a beautiful mathematical expression allows for expressive writing.
 
 # Various Samples of Mathematical Expressions
 
@@ -44,8 +45,9 @@ When the length of the hypotenuse of a right triangle is $c$ and the length of o
 a^2 + b^2 = c^2
 ```
 
-This is very famous formula, and looking at \\url[https://en.wikipedia.org/wiki/Pythagorean_theorem]{Wikipedia}, there are so many ways to prove it.
-You can write it as below.
+This is very famous formula, and there are so many ways to prove it on [Wikipedia][1].
+
+[1]: https://en.wikipedia.org/wiki/Pythagorean_theorem
 
 ```
 a^2 + b^2 = c^2
@@ -114,6 +116,8 @@ You can write it as follows.
 \int_{-\infty}^{\infty} f(x) dx = \sqrt{\pi}
 ```
 
+<pagebreak />
+
 ## Harmonic Number
 
 The n-th harmonic number is the sum of the reciprocals of the first n natural numbers:
@@ -147,6 +151,26 @@ It can be written as follows.
 \frac{1}{1^2} + \frac{1}{2^2} + \frac{1}{3^2} + \dots
   = \displaystyle\sum_{i=1}^\infty \frac{1}{n^2}= \frac{\pi^2}{6}
 ```
+
+## Riemann Zeta Function
+
+It is the general form of the Basel problem, and it is the Basel problem when $s = 2$.
+
+```math
+\zeta(s)
+  = 1 + \frac{1}{2^s} + \frac{1}{3^s} + \dots
+  = \displaystyle\sum_{i=1}^\infty \frac{1}{n^s}
+```
+
+It reached to the famous Riemann hypothesis "The real part of every nontrivial zero of the Riemann zeta function is $\\frac{1}{2}$."
+
+```
+\zeta(s)
+  = 1 + \frac{1}{2^s} + \frac{1}{3^s} + \dots
+  = \displaystyle\sum_{i=1}^\infty \frac{1}{n^s}
+```
+
+<pagebreak />
 
 ## Matrix
 

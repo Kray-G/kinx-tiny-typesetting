@@ -5,6 +5,7 @@
 <param style="JArticleA4"/>
 <style-info name="code.lineNumber" value="false"/>
 <style-info name="code.box" value="BOX_NORMAL"/>
+<toc />
 
 # 概要
 
@@ -44,9 +45,10 @@ f(r) = \pi r^2
 a^2 + b^2 = c^2
 ```
 
-非常に有名な公式で、
-\\url[https://ja.wikipedia.org/wiki/%E3%83%94%E3%82%BF%E3%82%B4%E3%83%A9%E3%82%B9%E3%81%AE%E5%AE%9A%E7%90%86]{Wikipedia} を見ると非常に多くの証明方法があります。
+非常に有名な公式で、[Wikipedia][] を見ると非常に多くの証明方法があります。
 これは次のように記述します。
+
+[Wikipedia]: https://ja.wikipedia.org/wiki/%E3%83%94%E3%82%BF%E3%82%B4%E3%83%A9%E3%82%B9%E3%81%AE%E5%AE%9A%E7%90%86
 
 ```
 a^2 + b^2 = c^2
@@ -116,12 +118,15 @@ f(x) = \frac{1}{\sqrt{2\pi\sigma^2}}\exp{\left(-\frac{(x-\mu)^2}{2\sigma^2}\righ
 \int_{-\infty}^{\infty} f(x) dx = \sqrt{\pi}
 ```
 
+<pagebreak />
+
 ## 調和数（発散列）
 
 n-番目の調和数とは 1 から n までの自然数の逆数和のことを言います。
 
 ```math
-\frac{1}{1} + \frac{1}{2} + \frac{1}{3} + \dots = \displaystyle\sum_{i=1}^\infty \frac{1}{n}= \infty
+\frac{1}{1} + \frac{1}{2} + \frac{1}{3} + \dots
+  = \displaystyle\sum_{i=1}^\infty \frac{1}{n} = \infty
 ```
 
 不思議なことに、なぜか分数を極限まで足していくと発散します。
@@ -130,7 +135,7 @@ n-番目の調和数とは 1 から n までの自然数の逆数和のことを
 
 ```
 \frac{1}{1} + \frac{1}{2} + \frac{1}{3} + \dots
-  = \displaystyle\sum_{i=1}^\infty \frac{1}{n}= \infty
+  = \displaystyle\sum_{i=1}^\infty \frac{1}{n} = \infty
 ```
 
 ## バーゼル問題
@@ -139,7 +144,7 @@ n-番目の調和数とは 1 から n までの自然数の逆数和のことを
 
 ```math
 \frac{1}{1^2} + \frac{1}{2^2} + \frac{1}{3^2} + \dots
-  = \displaystyle\sum_{i=1}^\infty \frac{1}{n^2}= \frac{\pi^2}{6}
+  = \displaystyle\sum_{i=1}^\infty \frac{1}{n^2} = \frac{\pi^2}{6}
 ```
 
 調和数と似ていますが、なぜか分母を 2 乗にするだけで収束するようになります。
@@ -148,8 +153,28 @@ n-番目の調和数とは 1 から n までの自然数の逆数和のことを
 
 ```
 \frac{1}{1^2} + \frac{1}{2^2} + \frac{1}{3^2} + \dots
-  = \displaystyle\sum_{i=1}^\infty \frac{1}{n^2}= \frac{\pi^2}{6}
+  = \displaystyle\sum_{i=1}^\infty \frac{1}{n^2} = \frac{\pi^2}{6}
 ```
+
+## ゼータ関数
+
+バーゼル問題の一般形で、$s = 2$ のときがバーゼル問題ですね。
+
+```math
+\zeta(s)
+  = 1 + \frac{1}{2^s} + \frac{1}{3^s} + \dots
+  = \displaystyle\sum_{i=1}^\infty \frac{1}{n^s}
+```
+
+そして有名なリーマン予想「リーマンゼータ関数のすべての非自明な零点の実部は $\\frac{1}{2}$  である」に辿り着きます。
+
+```
+\zeta(s)
+  = 1 + \frac{1}{2^s} + \frac{1}{3^s} + \dots
+  = \displaystyle\sum_{i=1}^\infty \frac{1}{n^s}
+```
+
+<pagebreak />
 
 ## 行列
 

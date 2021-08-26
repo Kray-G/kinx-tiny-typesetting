@@ -194,22 +194,23 @@ You can use Scoop to install Kinx on Windows.
 ```console
 $ scoop bucket add kinx https://github.com/Kray-G/kinx # only needed the first time
 $ scoop install kinx
+$ kinx --install-path
 ```
 
 Register the bucket URL at first. This registration is needed at the first time only.
-If the bucket were registered, you could install Kinx by the command of `kip install Kinx`.
+If the bucket were registered, you could install Kinx by the command of `scoop install Kinx`.
+After installing Kinx by Scoop, execute the command of `kinx --install-path` to use a package command.
 
 #### Linux
 
-On Linux(Ubuntu), download a `.deb` file from [Relases](https://github.com/Kray-G/kinx/releases) page first.
+On Linux(Ubuntu), download a `.deb` file[^releasefile] from [Relases](https://github.com/Kray-G/kinx/releases) page first.
 After that, move to the directory where you downloaded the file, and install it as below.
+
+[^releasefile]: The file name has the version number. Download the version that you need.
 
 ```console
 $ sudo apt install ./kinx_1.1.0-0_amd64.deb
 ```
-
-This is an example when you install the version 1.1.0.
-The file name includes a version number, so install the version which you need.
 
 ### Install Kinx Tiny Typwsetting Package
 

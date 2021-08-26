@@ -199,22 +199,23 @@ Windows では Scoop を使います。
 ```console
 $ scoop bucket add kinx https://github.com/Kray-G/kinx
 $ scoop install kinx
+$ kinx --install-path
 ```
 
 まず Kinx 用 Bucket の URL を登録します。この登録は最初に 1 度だけ必要です。
 Bucket が登録されていれば、`scoop install kinx` コマンドでインストールできます。
+Scoop でインストールした際は、パッケージコマンドへのパスを通すために `kinx --install-path` コマンドを実行してください。
 
 #### Linux
 
-Linux(Ubuntu) では、まず [Relases](https://github.com/Kray-G/kinx/releases) ページから `.deb` ファイルをダウンロードします。
+Linux(Ubuntu) では、[Relases](https://github.com/Kray-G/kinx/releases) ページから `.deb` ファイルをダウンロードします[^releasefile]。
 ダウンロードしたディレクトリに移動し、次のようにインストールします。
+
+[^releasefile]: ファイル名にバージョン番号が含まれます。必要なバージョンをダウンロードしてください
 
 ```console
 $ sudo apt install ./kinx_1.1.0-0_amd64.deb
 ```
-
-ここでは v1.1.0 をインストールする例です。
-ファイル名にバージョン番号が含まれていますので、必要なバージョンをインストールしてください。
 
 ### Kinx Tiny Typwsetting パッケージのインストール
 

@@ -50,14 +50,25 @@ namespace Typesetting {
         public addTag(tag, values) {
             tagmap_[tag] = values;
         }
+        public makeText(values) {
+            var str = '';
+            reset();
+            var l = values.length();
+            for (var i = 0; i < l; ++i) {
+                str += values[i].value;
+            }
+            return str.trim();
+        }
         public makeInlineText(values) {
             var str = '';
             reset();
-            values.each { &(value)
+            var l = values.length();
+            for (var i = 0; i < l; ++i) {
+                var value = values[i];
                 if (this[value.name].isFunction) {
                     str += this[value.name](value);
                 }
-            };
+            }
             return str.trim();
         }
 
@@ -139,13 +150,27 @@ namespace Typesetting {
             }
             return '\\inlineimage[%{value.alt}]{%{value.src}}';
         }
+        public imagetag(value) {
+            var values = tagmap_[value.tag];
+            if (!values) {
+                throw RuntimeException("Unknown image tag: " + value.tag);
+            }
+            return '\\inlineimage[%{value.tag}]{%{makeText(values)}}';
+        }
         public link(value) {
             return "\\url[%{value.href}]{%{value.title}}";
         }
-        public tag(value) {
+        public linktag(value) {
             var values = tagmap_[value.tag];
             if (!values) {
-                throw RuntimeException("Unknown tag: " + value.tag);
+                throw RuntimeException("Unknown link tag: " + value.tag);
+            }
+            return "\\url[%{makeText(values)}]{%{value.text}}";
+        }
+        public footnote(value) {
+            var values = tagmap_[value.tag];
+            if (!values) {
+                throw RuntimeException("Unknown footnote tag: " + value.tag);
             }
             return "\\footnote{%{makeInlineText(values)}}";
         }
