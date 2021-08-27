@@ -522,6 +522,7 @@ namespace Typesetting {
 
         public heading(ast) {
             flushDoc();
+            ctx_.chapter = false;
             if (doc_.isUndefined) {
                 makeDocument();
             }
@@ -753,9 +754,27 @@ namespace Typesetting {
             doc_.save(file);
         }
 
+        var includeFile;
+        private loadIncludeFile(filename, filepath) {
+            var file = filepath == "" ? filename : filepath / filename;
+            logger_.info("Including the file: %{file}");
+            var contents = File.load(file).trim() + "\n";
+            if (contents =~ /<include\s*file\s*=\s*"(.+\.md)"\s*\/>/) {
+                return includeFile(contents, filename.parentPath());
+            }
+            return contents;
+        }
+
+        private includeFile(contents, filepath) {
+            return contents.replace(/<include\s*file\s*=\s*"(.+\.md)"\s*\/>/) { &(g)
+                return loadIncludeFile(g[1].string, filepath);
+            };
+        }
+
         public parse(contents, file, options) {
+            logger_.info("Start parsing the Markdown document");
             options_ = options;
-            Markdown.BlockParser(contents, &(a) => {
+            Markdown.BlockParser(includeFile(contents, options.filepath), &(a) => {
                 this[a.name](a);
             });
             generateTo(file);
