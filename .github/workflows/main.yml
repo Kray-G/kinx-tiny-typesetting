@@ -7,7 +7,7 @@ on:
 jobs:
   package:
     name: package
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: package
@@ -18,7 +18,8 @@ jobs:
           mkdir -p $tag/docs
           cp -r ./src/* $tag/
           cp -r ./docs/* $tag/docs/
-          zip -r package.zip $tag/
+          cd $tag
+          zip -r ../package.zip *
       - name: upload archive
         uses: actions/upload-artifact@v1
         with:
