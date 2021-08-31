@@ -179,6 +179,8 @@ namespace Typesetting {
                 style[lastkey] = true;
             } else if (value == "false") {
                 style[lastkey] = false;
+            } else if (value =~ /^[0-9]+(?:\.[0-9]+)$/) {
+                style[lastkey] = Double.parseDouble(value);
             } else {
                 style[lastkey] = value;
             }
