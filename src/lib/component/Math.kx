@@ -64,6 +64,9 @@ namespace Typesetting {
                 if (caption_) {
                     @imageCaption(info, core, caption_, linetop);
                 }
+                if (info.base.resetIndentAfterNonParagraph) {
+                    context.notParagraph = info.base.noIndentTopOfParagraph;
+                }
                 return linetop;
             }
         }

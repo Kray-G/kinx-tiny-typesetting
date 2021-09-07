@@ -154,6 +154,9 @@ namespace Typesetting {
                 context.font.fontObj = fontObj;
                 context.font.color = fontColor;
                 context.font.bgcolor = fontBgColor;
+                if (info.base.resetIndentAfterNonParagraph) {
+                    context.notParagraph = info.base.noIndentTopOfParagraph;
+                }
             }
         }
 

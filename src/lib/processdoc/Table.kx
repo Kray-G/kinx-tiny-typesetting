@@ -16,12 +16,14 @@ namespace Typesetting {
             var limitWidthBase_ = 50;
             var limitWidth_ = limitWidthBase_;
 
-            private adjustWidth(lens) {
-                var l = lens.length() - 1;
+            private adjustWidth(lens, sorted) {
+                var l = sorted.length() - 1;
                 for (var i = 0; i < l; ++i) {
-                    if (0 < lens[i] && (lens[i] * 2) < lens[i+1]) {
+                    var li = lens[sorted[i].index];
+                    var ln = lens[sorted[i+1].index];
+                    if (0 < li && (li * 2) < ln) {
                         for (var j = i+1; j <= l; ++j) {
-                            lens[j] = lens[j] * 5 / 8;
+                            lens[sorted[j].index] = lens[sorted[j].index] * 5 / 8;
                         }
                         return true;
                     }
@@ -35,7 +37,7 @@ namespace Typesetting {
                 for (var i = 0; i < l; ++i) {
                     var e = sorted[i];
                     if (0 < e.width.width && e.width.width < limitWidth_) {
-                        if (adjustWidth(lens)) {
+                        if (adjustWidth(lens, sorted)) {
                             return false;
                         }
                         return true;    # no more check.
@@ -382,6 +384,9 @@ namespace Typesetting {
                 writer.setMargin(savedMargin_);
                 writer.setPos({ x: -1, y: ybase });
                 writer.lineBreak(paragraphSkipWidth);
+                if (info_.base.resetIndentAfterNonParagraph) {
+                    context_.notParagraph = info_.base.noIndentTopOfParagraph;
+                }
             }
 
         }

@@ -7,6 +7,10 @@ namespace Style {
         var fontSizeM1 = fontSize - 1;
         @style = {
             "outline":                  true,
+            "bookmark":                 {
+                openLevel:              99,
+                loflot:                 true,
+            },
             "pagesize":                 PDF_PAGE_SIZE_A4,
             "direction":                PDF_PAGE_PORTRAIT,
             "columns":                  1,

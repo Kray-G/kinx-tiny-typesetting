@@ -43,8 +43,11 @@ namespace Typesetting {
                         op.push(key + "=" + opts_[key]);
                     }
                 };
-                return new Typesetting.Component.Paragraph("\\image[%{op.join(',')}]{%{opts_.file}}")
+                new Typesetting.Component.Paragraph("\\image[%{op.join(',')}]{%{opts_.file}}")
                         .write(info, context, core, align);
+                if (info.base.resetIndentAfterNonParagraph) {
+                    context.notParagraph = info.base.noIndentTopOfParagraph;
+                }
             }
         }
 

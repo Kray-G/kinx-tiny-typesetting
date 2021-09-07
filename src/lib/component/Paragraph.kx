@@ -3,6 +3,7 @@ namespace Typesetting {
     namespace Component {
 
         class Paragraph(opts_, text_) : Component.Base(opts_) {
+            var prevBq_;
             private initialize() {
                 if (text_.isUndefined) {
                     [text_, opts_] = [opts_];
@@ -16,8 +17,14 @@ namespace Typesetting {
                 var savedColor = context.font.color;
                 var writer = info.writer;
                 var margin = writer.getMargin();
+                if (context.notParagraph) {
+                    prevBq_ = -1;
+                }
                 var bqLevel = opts_.blockquoteLevel;
                 if (bqLevel > 0) {
+                    if (info.base.resetIndentAfterNonParagraph && bqLevel != prevBq_) {
+                        context.notParagraph = true;
+                    }
                     context.font.color = info.base.blockquote.color;
                     opts_.vline = [];
                     for (var i = 0; i < bqLevel; ++i) {
@@ -26,6 +33,7 @@ namespace Typesetting {
                     opts_.margin.left = margin.left + (info.base.blockquote.indentSize * bqLevel);
                     opts_.vlineWidth = info.base.blockquote.lineWidth;
                 }
+                prevBq_ = bqLevel;
 
                 var lines = core.paragraph.exec(opts_, text_);
                 var lineFeedWidth = 0;
@@ -43,7 +51,7 @@ namespace Typesetting {
                 });
                 core.flushParagraph();
 
-                context.outputSection = false;
+                context.notParagraph = false;
                 context.font.color = savedColor;
                 writer.setMargin(margin);
             }

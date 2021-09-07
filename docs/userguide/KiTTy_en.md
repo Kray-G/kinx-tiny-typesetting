@@ -10,6 +10,7 @@ Small and Easy, but Beautiful Design.
 <param subtitleSize="14.4"/>
 <param backgroundImage="back.jpg"/>
 
+<style-info name="bookmark.openLevel" value="0" />
 <!-- style-info name="chapter.style" value="BigChapter3" /-->
 
 <toc with="lof,lot"/>
@@ -1133,7 +1134,7 @@ See \\nameref{Chapter Design} for the chapter design.
 <style-info name="chapter.style" value="BigChapter3" />
 ```
 
-See \\nameref{Style Parameters} for details of style parameters which you can change.
+See \\nameref{Style} for details of style parameters which you can change.
 
 ### Heading
 
@@ -1884,7 +1885,7 @@ This style has a quite big chapter number and puts a heading with a regular font
 
 ![scale=0.8,box=BOX_THIN](chapter_bigchapter3_en.png)
 
-# About Style Parameters
+# Style
 
 ## Style Parameters
 

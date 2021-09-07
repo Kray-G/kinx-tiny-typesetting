@@ -162,6 +162,9 @@ namespace Typesetting {
                 var fontSize = info_.base.itemize.fontSize[0];
                 info_.writer.addY(lineFeedWidthRatio * fontSize / 2, false);
                 info_.writer.setMargin(savedMargin);
+                if (info_.base.resetIndentAfterNonParagraph) {
+                    context_.notParagraph = info_.base.noIndentTopOfParagraph;
+                }
             }
 
         }

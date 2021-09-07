@@ -21,6 +21,9 @@ namespace Typesetting {
                     }
                 }
                 setColumn(info, core, 1);
+                if (info.base.resetIndentAfterNonParagraph) {
+                    context.notParagraph = info.base.noIndentTopOfParagraph;
+                }
             }
         }
 

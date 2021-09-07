@@ -234,8 +234,9 @@ namespace Typesetting {
             writer_.setContentsPage(@pages[-1], outline, y);
         }
 
-        public setContentsPage(outline, y) {
-            writer_.setContentsPage(page_, outline, y);
+        public setContentsPage(outline, y, pagenum) {
+            var page = pagenum.isDefined  ? @pages[pagenum] : page_;
+            writer_.setContentsPage(page, outline, y);
         }
 
         public setX(x) {

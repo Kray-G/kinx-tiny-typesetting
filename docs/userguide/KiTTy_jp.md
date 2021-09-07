@@ -10,6 +10,7 @@
 <param subtitleSize="14.4"/>
 <param backgroundImage="back.jpg"/>
 
+<style-info name="bookmark.openLevel" value="0" />
 <!-- style-info name="chapter.style" value="BigChapter3" /-->
 
 <toc with="lof,lot"/>
@@ -1153,7 +1154,7 @@ KiTTy はタイトル（カバーページ）、
 <style-info name="chapter.style" value="BigChapter3" />
 ```
 
-変更可能なスタイル・パラメータの詳細に関しては、「\\nameref{スタイル・パラメータについて}」をご参照ください。
+変更可能なスタイル・パラメータの詳細に関しては、「\\nameref{スタイル}」をご参照ください。
 
 ### 見出し
 
@@ -1907,7 +1908,7 @@ namespace ParagraphCommand {
 
 ![scale=0.8,box=BOX_THIN](chapter_bigchapter3_jp.png)
 
-# スタイル・パラメータについて
+# スタイル
 
 ## スタイル・パラメータ一覧
 

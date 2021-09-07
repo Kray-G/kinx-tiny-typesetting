@@ -22,7 +22,7 @@ namespace Typesetting {
                 var writer = info.writer;
                 writer.writeFloatingImage();
 
-                context.outputSection = info.base.noIndentTopOfParagraph;
+                context.notParagraph = info.base.noIndentTopOfParagraph;
                 writer.setColumn(info.base.columns);
                 core.pendingParagraphList.push({
                     isSection: true,
@@ -31,7 +31,10 @@ namespace Typesetting {
                         var level = info.base.sectionLevel;
                         var [linetop, header] = core.section.exec(level, @opts, @text);
                         if (info.base.outline && level <= info.base.toc.level) {
-                            var ol = writer.createOutline(context.outline[level - 1], core.makePlainText(header), true);
+                            var isOpened = info.base.bookmark.openLevel < level ? false : (info.base.bookmark.isOpen["level"+level] ?? true);
+                            var name = core.makePlainText(header);
+                            info.logger.info("Bookmark: '%{name}' is %{isOpened ? 'opened' : 'closed'}");
+                            var ol = writer.createOutline(context.outline[level - 1], name, isOpened);
                             writer.setCurrentPage(ol, linetop);
                             context.outline[level] = ol;
                         }
@@ -46,7 +49,7 @@ namespace Typesetting {
                 var writer = info.writer;
                 writer.writeFloatingImage();
 
-                context.outputSection = info.base.noIndentTopOfParagraph;
+                context.notParagraph = info.base.noIndentTopOfParagraph;
                 core.pendingParagraphList.push({
                     isSection: true,
                     lineFeedWidth: core.section.getHeight(2),
@@ -54,7 +57,10 @@ namespace Typesetting {
                         var level = info.base.sectionLevel + 1;
                         var [linetop, header] = core.section.exec(level, @opts, @text);
                         if (info.base.outline && level <= info.base.toc.level) {
-                            var ol = writer.createOutline(context.outline[level - 1], core.makePlainText(header), true);
+                            var isOpened = info.base.bookmark.openLevel < level ? false : (info.base.bookmark.isOpen["level"+level] ?? true);
+                            var name = core.makePlainText(header);
+                            info.logger.info("Bookmark: '%{name}' is %{isOpened ? 'opened' : 'closed'}");
+                            var ol = writer.createOutline(context.outline[level - 1], name, isOpened);
                             writer.setCurrentPage(ol, linetop);
                             context.outline[level] = ol;
                         }
@@ -69,7 +75,7 @@ namespace Typesetting {
                 var writer = info.writer;
                 writer.writeFloatingImage();
 
-                context.outputSection = info.base.noIndentTopOfParagraph;
+                context.notParagraph = info.base.noIndentTopOfParagraph;
                 core.pendingParagraphList.push({
                     isSection: true,
                     lineFeedWidth: core.section.getHeight(3),
@@ -77,7 +83,10 @@ namespace Typesetting {
                         var level = info.base.sectionLevel + 2;
                         var [linetop, header] = core.section.exec(level, @opts, @text);
                         if (info.base.outline && level <= info.base.toc.level) {
-                            var ol = writer.createOutline(context.outline[level - 1], core.makePlainText(header), true);
+                            var isOpened = info.base.bookmark.openLevel < level ? false : (info.base.bookmark.isOpen["level"+level] ?? true);
+                            var name = core.makePlainText(header);
+                            info.logger.info("Bookmark: '%{name}' is %{isOpened ? 'opened' : 'closed'}");
+                            var ol = writer.createOutline(context.outline[level - 1], name, isOpened);
                             writer.setCurrentPage(ol, linetop);
                             context.outline[level] = ol;
                         }
@@ -92,7 +101,7 @@ namespace Typesetting {
                 var writer = info.writer;
                 writer.writeFloatingImage();
 
-                context.outputSection = info.base.noIndentTopOfParagraph;
+                context.notParagraph = info.base.noIndentTopOfParagraph;
                 core.pendingParagraphList.push({
                     isSection: true,
                     lineFeedWidth: core.section.getHeight(4),
@@ -110,7 +119,7 @@ namespace Typesetting {
                 var writer = info.writer;
                 writer.writeFloatingImage();
 
-                context.outputSection = info.base.noIndentTopOfParagraph;
+                context.notParagraph = info.base.noIndentTopOfParagraph;
                 core.pendingParagraphList.push({
                     isSection: true,
                     lineFeedWidth: core.section.getHeight(5),
@@ -146,7 +155,7 @@ namespace Typesetting {
                 }
 
                 # Chapter is an independent page and always an odd page.
-                context.outputSection = info.base.noIndentTopOfParagraph;
+                context.notParagraph = info.base.noIndentTopOfParagraph;
                 @pageBreak(info, core);
 
                 writer.setPageToOdd();
@@ -189,8 +198,10 @@ namespace Typesetting {
                     });
                 }
                 if (info.base.outline) {
-                    var margin = writer.makeMarginSize();
-                    var ol = writer.createOutline(context.outline[0], core.makePlainText(chapterInfo.plain), true);
+                    var isOpened = info.base.bookmark.openLevel < level ? false : (info.base.bookmark.isOpen["level"+level] ?? true);
+                    var name = core.makePlainText(chapterInfo.plain);
+                    info.logger.info("Bookmark: '%{name}' is %{isOpened ? 'opened' : 'closed'}");
+                    var ol = writer.createOutline(context.outline[0], name, isOpened);
                     writer.setCurrentPage(ol, chapterInfo.linetop);
                     context.outline[1] = ol;
                 }
