@@ -122,7 +122,7 @@ namespace Typesetting {
                 @captionText = caption;
                 @captionHeader = info_.base.image.label + ' ' + @captionNumber;
                 @fullHeader = info_.base.image.fulllabel + ' ' + @captionNumber;
-                @caption =  + ' ' + caption;
+                @caption = @fullHeader + ' ' + caption;
             }
             @fontObj = context_.font.fontObj;
             @fontSize = context_.font.fontSize;
