@@ -1,4 +1,5 @@
 using Process;
+using style.ColorMap;
 
 namespace Typesetting {
 namespace Util {
@@ -19,6 +20,39 @@ namespace Util {
         M = (1 - G - K);
         Y = (1 - B - K);
         return [ C, M, Y, K ];
+    };
+
+    Typesetting.Util.parseColor = function(params) {
+        var color;
+        if (params.R && params.G && params.B) {
+            color = Typesetting.Util.rgb2cmyk(params.R, params.G, params.B);
+        } else if (params.C && params.M && params.Y && params.K) {
+            color = [ params.C, params.M, params.Y, params.K ];
+        } else if (params.r && params.g && params.b) {
+            color = Typesetting.Util.rgb2cmyk(params.r, params.g, params.b);
+        } else if (params.c && params.m && params.y && params.k) {
+            color = [ params.c, params.m, params.y, params.k ];
+        } else {
+            if (params.isArray) {
+                var length = params.length();
+                if (length == 4) {
+                    return params;
+                }
+                if (length == 3) {
+                    return Typesetting.Util.rgb2cmyk(...color);
+                }
+            }
+            if (!params.isString) {
+                throw RuntimeException("Specify the color name");
+            }
+            var name = params.toLower();
+            var cmyk = Typesetting.colormap[name].cmyk;
+            if (!cmyk) {
+                throw RuntimeException("Unknown color name: " + name);
+            }
+            color = [ cmyk.c, cmyk.m, cmyk.y, cmyk.k ];
+        }
+        return color ?? params;
     };
 
     var re_ = /^([-+]?([0-9]+)?(?:\.[0-9]+)?)(em|ex|in|cm|mm|pt|pc|px|pt)?$/;

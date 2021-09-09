@@ -360,6 +360,32 @@ namespace Typesetting {
                             });
                             r = true;
                         }
+                    } else if (v.startsWith("<code-lang ")) {
+                        var doc = Xml.parseString(v);
+                        var elem = doc.documentElement();
+                        var lang = elem.getAttribute('lang') || elem.getAttribute('language');
+                        var style = Typesetting.Style.Code[lang];
+                        if (style) {
+                            var fgColor = (elem.getAttribute('fgColor') || elem.getAttribute('foregroundColor')).trim();
+                            if (fgColor) {
+                                style.foregroundColor = (fgColor[0] == '{'[0] || fgColor[0] == '['[0]) ? JSON.parse(fgColor) : fgColor;
+                            }
+                            var bgColor = elem.getAttribute('bgColor') || elem.getAttribute('backgroundColor');
+                            if (bgColor) {
+                                style.backgroundColor = (bgColor[0] == '{'[0] || bgColor[0] == '['[0]) ? JSON.parse(bgColor) : bgColor;
+                            }
+                            var name = elem.getAttribute('name');
+                            var value = elem.getAttribute('value');
+                            if (name && value) {
+                                style.pattern.each {
+                                    if (_1.name == name) {
+                                        _1.color = (value[0] == '{'[0] || value[0] == '['[0]) ? JSON.parse(value) : value;
+                                        return false;
+                                    }
+                                };
+                            }
+                        }
+                        r = true;
                     } else if (v.startsWith("<style-info ")) {
                         var doc = Xml.parseString(v);
                         var elem = doc.documentElement();
@@ -642,6 +668,7 @@ namespace Typesetting {
             default:
                 output_.push(&() => {
                     var code = new Typesetting.Component.Code(inline_.makeInlineText(ast.values).trim());
+                    code.setSyntax(check.syntax) if (check.syntax != "");
                     if (check.lineNumber) {
                         code.showLineNumber();
                     }

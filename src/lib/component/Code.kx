@@ -3,6 +3,7 @@ namespace Typesetting {
     namespace Component {
 
         class Code(opts_, code_) : Component.Base(opts_) {
+            var endtag_;
             private initialize() {
                 if (code_.isUndefined) {
                     [code_, opts_] = [opts_];
@@ -20,10 +21,100 @@ namespace Typesetting {
             public setBackgroundColor(bgcolor) {
                 opts_.bgcolor = bgcolor;
             }
+            public setSyntax(lang) {
+                opts_.lang = lang;
+                opts_.syntax = Typesetting.Style.Code[lang];
+            }
+            private writeLineWithColor(line, fontObj, fontSize, info, context, core, writer, lineFeedWidth) {
+                var startPos = 0;
+                var words = [];
+                if (endtag_.pattern.isRegex) {
+                    var p = endtag_.pattern;
+                    p.reset(line);
+                    p.setPosition(0);
+                    if (!p.find()) {
+                        var color = context.font.color;
+                        context.font.color = endtag_.color;
+                        core.util.writeLine(opts_, line, fontObj, fontSize, lineFeedWidth);
+                        context.font.color = color;
+                        return;
+                    }
+                    var g = p.group[0];
+                    words.push({
+                        name: endtag_.name,
+                        word: g.string,
+                        color: endtag_.color,
+                        pos: { start: g.begin, end: g.end },
+                    });
+                    startPos = g.end;
+                    endtag_ = null;
+                }
+
+                var buf = { start: startPos, end: startPos };
+                var pats = opts_.syntax.pattern;
+                var pl = pats.length();
+                for (var pos = startPos, len = line.length(); pos < len; ) {
+                    var start = pos;
+                    for (var i = 0; i < pl; ++i) {
+                        var pi = pats[i];
+                        var p = pi.pattern;
+                        p.reset(line);
+                        p.setPosition(pos);
+                        if (p.find() && (found = p.group[0]).begin == pos) {
+                            if (buf.start != buf.end) {
+                                words.push({
+                                    name: "none",
+                                    word: line.subString(buf.start, buf.end - buf.start),
+                                    pos: { start: buf.start, end: buf.end },
+                                });
+                            }
+                            words.push({
+                                name: pi.name,
+                                word: line.subString(found.begin, found.end - found.begin),
+                                color: pi.color,
+                                pos: { start: found.begin, end: found.end },
+                            });
+                            if (pi.end.isRegex) {
+                                endtag_ = { pattern: pi.end, color: pi.color, name: pi.name };
+                                pos = len;
+                            } else {
+                                pos = found.end;
+                                buf.start = buf.end = found.end;
+                            }
+                            break;
+                        }
+                    }
+                    if (pos == start) {
+                        buf.end = ++pos;
+                    }
+                }
+                if (buf.start != buf.end) {
+                    words.push({
+                        name: "none",
+                        word: line.subString(buf.start, buf.end - buf.start),
+                    });
+                }
+
+                var x = opts_.margin.left;
+                words.each { &({ word, color })
+                    var fgColor = context.font.color;
+                    context.font.color = Typesetting.Util.parseColor(color) if (color.isDefined);
+                    var textWidth = info.measure.textWidth(fontObj, fontSize, word);
+                    var n = Typesetting.Linebreak.Box(textWidth, new Typesetting.Word(info).setWord(fontObj, fontSize, word));
+                    writer.write(n, x);
+                    x += textWidth;
+                    context.font.color = fgColor;
+                };
+                writer.lineBreak(lineFeedWidth);
+            }
             public write(info, context, core) {
                 core.flushParagraph();
+                if (opts_.lang.isDefined && opts_.syntax.isUndefined) {
+                    info.logger.warn("Unknown code language: " + opts_.lang);
+                }
                 var lineColor = context.code.lineColor ?? info.base.code.lineColor;
-                var bgColor = opts_.bgcolor ?? context.code.backgroundColor ?? info.base.code.backgroundColor;
+                var fgColor = opts_.color ?? opts_.syntax.foregroundColor;
+                var bgColor = opts_.bgcolor ?? opts_.syntax.backgroundColor ?? context.code.backgroundColor ?? info.base.code.backgroundColor;
                 var shadowColor = context.code.shadowColor ?? info.base.code.shadowColor;
 
                 [opts_, code_] = core.util.makeOption(opts_, code_, false);
@@ -32,8 +123,8 @@ namespace Typesetting {
                 var fontObj = context.font.fontObj;
                 var fontObjBase = context.font.fontObjBase;
                 core.fontType("Monotype");
-                context.font.color = opts_.color;
-                context.font.bgcolor = opts_.bgcolor;
+                context.font.color = fgColor;
+                context.font.bgcolor = bgColor;
 
                 var writer = info.writer;
                 var margin = writer.getMargin();
@@ -96,7 +187,12 @@ namespace Typesetting {
                         core.util.writeX(x, num, fontObj, numberSize);
                     }
 
-                    core.util.writeLine(opts_, line, context.font.fontObj, codeFontSize, lineFeedWidthBase);
+                    if (opts_.syntax.isUndefined) {
+                        core.util.writeLine(opts_, line, context.font.fontObj, codeFontSize, lineFeedWidthBase);
+                    } else {
+                        writeLineWithColor(line, context.font.fontObj, codeFontSize, info, context, core, writer, lineFeedWidthBase);
+                    }
+
                     var isBreak = writer.getPos(true).y < 0;
                     if (!isBreak) {
                         linetop1 = writer.getLineTop(context.font.fontObj, context.font.codeFontSize);

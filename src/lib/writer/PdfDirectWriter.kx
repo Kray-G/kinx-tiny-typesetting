@@ -77,18 +77,10 @@ namespace Typesetting {
         }
 
         private convColorCode(color) {
-            if (color.isArray) {
-                var l = color.length();
-                if (l == 4) {
-                    return color;
-                }
-                if (l == 3) {
-                    return Typesetting.Util.rgb2cmyk(...color);
-                }
-            }
-            if (color.isString) {
-                var cmyk = Typesetting.colormap[color].cmyk;
-                return [cmyk.c, cmyk.m, cmyk.y, cmyk.k];
+            try {
+                return Typesetting.Util.parseColor(color);
+            } catch {
+                ;
             }
             return; // null
         }
