@@ -2,12 +2,11 @@ namespace Typesetting {
 
     var Linebreak = Typesetting.Linebreak;
 
-    class NullWord(info_) {
+    class NullWord(_info) {
         @isNullWord = true;
-        var measure_ = info_.measure;
         private initialize() {
         }
-        public setWord(fontObj, fontSize, word) {
+        public setWord(_fontObj, _fontSize, _word) {
             return this;
         }
         public fontObj() {
@@ -20,12 +19,12 @@ namespace Typesetting {
         }
         public spaceWidth() {
         }
-        public additionalSpace(width) {
+        public additionalSpace(_width) {
         }
         public toString() {
             return "{NullWord}";
         }
-        public display(indent) {
+        public display(_indent) {
         }
     }
 
@@ -42,13 +41,12 @@ namespace Typesetting {
         public toString() {
             return "{Vspace:%{[@spaceText,@space]}}";
         }
-        public display(indent) {
+        public display(_indent) {
         }
     }
 
     class InlineImage(info_) {
         @isInlineImage = true;
-        var measure_ = info_.measure;
         var writer_ = info_.writer;
         public setImage(imgfile, opts) {
             var scale = Double.parseDouble(opts.scale);
@@ -89,7 +87,7 @@ namespace Typesetting {
         public toString() {
             return "{Image}";
         }
-        public display(indent) {
+        public display(_indent) {
         }
         public flatten() {
             return this;
@@ -99,7 +97,6 @@ namespace Typesetting {
     class Image(info_) {
         @isImage = true;
         var context_ = info_.context;
-        var measure_ = info_.measure;
         var writer_ = info_.writer;
         public setImage(imgfile, scale, caption) {
             @word = "<FullWidthImage>";
@@ -158,7 +155,7 @@ namespace Typesetting {
         public toString() {
             return "{Image}";
         }
-        public display(indent) {
+        public display(_indent) {
         }
         public flatten() {
             return this;
@@ -173,7 +170,7 @@ namespace Typesetting {
                 y: linetop,
             });
         }
-        public write(writer, x, y, isFloatingLine, align) {
+        public write(writer, _x, _y, _isFloatingLine, align) {
             var linetop = writer.getLineTop(@fontObj, @fontSize);
             writer_.imageTo(@image, @scale, align, { lineWidth: @lineWidth, padding: @padding });
             if (@caption) {
@@ -247,7 +244,7 @@ namespace Typesetting {
     }
 
     # WordSet is a set of Word with space, or WordSet itself recursively.
-    class WordSet(info_) {
+    class WordSet(_info) {
         @isWordSet = true;
         private initialize() {
             @words = [];
@@ -306,7 +303,7 @@ namespace Typesetting {
         public flatten() {
             var bottom, top;
             var result = [];
-            @words.each { &(word, i)
+            @words.each { &(word)
                 var wd = word.isBox ? word.value : word;
                 if (wd.isWordSet) {
                     result += wd.flatten();
