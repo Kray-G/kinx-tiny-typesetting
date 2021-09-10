@@ -1,0 +1,23 @@
+namespace Typesetting {
+namespace Style {
+
+    Typesetting.Style.CodeColor.standard = {
+        "box":                 Typesetting.BOX_NORMAL,
+        "foreground-color":    "black",
+        "background-color":    "cornsilk1",
+
+        "comment-single-line": "grey50",
+        "comment-multi-line":  "grey50",
+        "string-multi-line":   "darkred",
+        "preprocessor":        "grey30",
+        "keyword":             "dodgerblue2",
+        "regex-literal":       "red",
+        "string-literal":      "darkred",
+        "number":              "lime",
+        "function":            "darkorange3",
+        "variable-capital":    "green4",
+        "variable":            "cyan1",
+    };
+
+} # namespace Style
+} # namespace Typesetting

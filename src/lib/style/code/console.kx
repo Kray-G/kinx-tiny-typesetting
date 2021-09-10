@@ -1,0 +1,12 @@
+namespace Typesetting {
+namespace Style {
+
+    Typesetting.Style.Code[__FILE__.stem()] = {
+        box:             Typesetting.BOX_NORMAL,
+        lineNumber:      false,
+        foregroundColor: "white",
+        backgroundColor: "black",
+    };
+
+} # namespace Style
+} # namespace Typesetting

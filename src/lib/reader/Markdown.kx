@@ -360,29 +360,37 @@ namespace Typesetting {
                             });
                             r = true;
                         }
-                    } else if (v.startsWith("<code-lang ")) {
+                    } else if (v.startsWith("<code-style ")) {
                         var doc = Xml.parseString(v);
                         var elem = doc.documentElement();
+                        var theme = elem.getAttribute('theme') || null;
                         var lang = elem.getAttribute('lang') || elem.getAttribute('language');
-                        var style = Typesetting.Style.Code[lang];
-                        if (style) {
-                            var fgColor = (elem.getAttribute('fgColor') || elem.getAttribute('foregroundColor')).trim();
-                            if (fgColor) {
-                                style.foregroundColor = (fgColor[0] == '{'[0] || fgColor[0] == '['[0]) ? JSON.parse(fgColor) : fgColor;
-                            }
-                            var bgColor = elem.getAttribute('bgColor') || elem.getAttribute('backgroundColor');
-                            if (bgColor) {
-                                style.backgroundColor = (bgColor[0] == '{'[0] || bgColor[0] == '['[0]) ? JSON.parse(bgColor) : bgColor;
-                            }
-                            var name = elem.getAttribute('name');
-                            var value = elem.getAttribute('value');
-                            if (name && value) {
-                                style.pattern.each {
-                                    if (_1.name == name) {
-                                        _1.color = (value[0] == '{'[0] || value[0] == '['[0]) ? JSON.parse(value) : value;
-                                        return false;
-                                    }
-                                };
+                        if (!lang) {
+                            Typesetting.Style.CodeColorTheme = theme;
+                        } else {
+                            var style = Typesetting.Style.Code[lang];
+                            if (style) {
+                                if (theme) {
+                                    style.theme = theme;
+                                }
+                                var fgColor = (elem.getAttribute('fgColor') || elem.getAttribute('foregroundColor')).trim();
+                                if (fgColor) {
+                                    style.foregroundColor = (fgColor[0] == '{'[0] || fgColor[0] == '['[0]) ? JSON.parse(fgColor) : fgColor;
+                                }
+                                var bgColor = elem.getAttribute('bgColor') || elem.getAttribute('backgroundColor');
+                                if (bgColor) {
+                                    style.backgroundColor = (bgColor[0] == '{'[0] || bgColor[0] == '['[0]) ? JSON.parse(bgColor) : bgColor;
+                                }
+                                var name = elem.getAttribute('name');
+                                var value = elem.getAttribute('value');
+                                if (name && value) {
+                                    style.pattern.each {
+                                        if (_1.name == name) {
+                                            _1.color = (value[0] == '{'[0] || value[0] == '['[0]) ? JSON.parse(value) : value;
+                                            return false;
+                                        }
+                                    };
+                                }
                             }
                         }
                         r = true;
@@ -503,8 +511,8 @@ namespace Typesetting {
             var checker = paramsText.split(':');
             var res = {
                 syntax: checker[0],
-                lineNumber: style_.code.lineNumber ?? true,
-                box: style_.code.box.isString ? (Typesetting[style_.code.box] ?? Typesetting.BOX_SHADOW) : Typesetting.BOX_SHADOW
+                lineNumber: style_.code.lineNumber,
+                box: style_.code.box.isString ? Typesetting[style_.code.box] : null,
             };
             if (checker.length() > 1) {
                 var params = checker[1];
@@ -653,15 +661,6 @@ namespace Typesetting {
             case 'chart':
                 output_.push(&() => {
                     var code = new Typesetting.Component.Chart(JSON.parse(ast.values[0].value));
-                    doc_.apply(code);
-                });
-                break;
-            case 'console':
-                output_.push(&() => {
-                    var code = new Typesetting.Component.Code(inline_.makeInlineText(ast.values).trim());
-                    code.showBox(Typesetting.BOX_NORMAL);
-                    code.setColor("white");
-                    code.setBackgroundColor("black");
                     doc_.apply(code);
                 });
                 break;
