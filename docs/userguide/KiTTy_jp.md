@@ -229,7 +229,7 @@ Kinx のパッケージをインストールするには `kip` コマンドを�
 $ kip install typesetting
 ```
 
-#### Linus
+#### Linux
 
 Linux でも Windows と概ね同じですが、Linux では管理者権限が必要です。
 必要に応じて `sudo` コマンドを使用してください。
@@ -1057,22 +1057,36 @@ class Test {
 
 ##### 言語指定
 
-いくつか言語指定することで事前定義された動作を行います。
+いくつかプログラミング言語、および特別な言語指定することで、事前定義された動作、およびハイライトを行います。
 なお、言語指定は <backq3 /> の直後に記載し、オプションとの区切りに `:` を使用します。
 
-|   言語    |                                             意味                                              |
-| --------- | --------------------------------------------------------------------------------------------- |
-| `math`    | 数式として処理します。詳しくは「\\nameref{数式}」を参照ください。                             |
-| `chart`   | グラフ（チャート）として処理します。詳しくは「\\nameref{グラフ（チャート）}」を参照ください。 |
-| `console` | 黒背景に白抜き文字で出力します。                                                              |
+<context label="Table:CodeLangOption"/>
+<context caption="言語指定で指定できる値の一覧"/>
+<context limit-column="0"/>
+
+|        言語        |                                             意味                                              |
+| ------------------ | --------------------------------------------------------------------------------------------- |
+| `math`             | 数式として処理します。詳しくは「\\nameref{数式}」を参照ください。                             |
+| `chart`            | グラフ（チャート）として処理します。詳しくは「\\nameref{グラフ（チャート）}」を参照ください。 |
+| `console`          | 黒背景に白抜き文字で出力します。                                                              |
+| `JSON`             | JSON 形式のシンタックスを解釈してハイライトします。                                           |
+| `c`、`c++`、`cpp`  | C/C++ 形式のシンタックスを解釈してハイライトします。                                          |
+| `javascript`、`js` | JavaScript 形式のシンタックスを解釈してハイライトします。                                     |
+| `java`             | Java 形式のシンタックスを解釈してハイライトします。                                           |
+| `kinx`             | Kinx 形式のシンタックスを解釈してハイライトします。                                           |
+| `ruby`             | Ruby 形式のシンタックスを解釈してハイライトします。                                           |
+| `python`           | Python 形式のシンタックスを解釈してハイライトします。                                         |
 
 ##### lineNumber
 
 `lineNumber` オプションは `true` または `false` を指定します。
+box 内部での行番号を表示するかどうかの設定です。
+デフォルトでは表示しますが、言語指定されている場合はその言語のデザインに従います。
 
 ##### box
 
 `box` オプションで指定可能な値は以下の通りです。
+デフォルトでは `BOX_SHADOW` ですが、言語指定されている場合はその言語のデザインに従います。
 
 <context label="Table:CodeBoxOption"/>
 <context caption="box オプションで指定できる値の一覧"/>
@@ -1089,6 +1103,75 @@ class Test {
 
 `color` および `bgcolor` によって文字色と背景色を変更できます。
 指定できる色に関しては、「\\nameref{色一覧}」を参照してください。
+
+#### シンタックス・ハイライト
+
+言語指定をすることで、いくつかの言語でのシンタックス・ハイライトをサポートしています。
+指定できる言語は \\nameref{Table:CodeLangOption} を参照してください。
+また、キーワード以外、カラーは同じにしています。
+ただし、言語ごとに以下のように変更可能です。
+
+```html
+<code-style lang="ruby" name="box" value="shadow" />
+<code-style lang="ruby" name="background-color" value="lightcyan1" />
+```
+
+<code-style lang="ruby" name="box" value="shadow" />
+<code-style lang="ruby" name="background-color" value="lightcyan1" />
+
+このように指定すると Ruby のみ変更されます。
+
+```kinx
+// This is a kinx block.
+function fib(n) {
+    if (n < 3) return n;
+    return fib(n-2) + fib(n-1);
+}
+System.println(fib(34));
+```
+
+```python
+# This is a python block.
+def fib(n):
+    if n < 3:
+        return n
+    else:
+        return fib(n-1) + fib(n-2)
+print fib(34)
+```
+
+```ruby
+# This is a ruby block.
+def fib(n)
+  return n if n < 3
+  fib(n-1) + fib(n-2)
+end
+p fib(34)
+```
+
+<context label="Table:CodeStyleOption"/>
+<context caption="コード・スタイル値の一覧"/>
+<context limit-column="0"/>
+
+指定可能な属性名は以下の通りです。
+色に関しては、「\\nameref{色一覧}」を参照ください。
+
+|        属性名         |  デフォルト値   |                                     備考                                      |
+| --------------------- | --------------- | ----------------------------------------------------------------------------- |
+| `box`                 | `"normal"`      | 枠のスタイル。値は `noline`、`normal`、`thin`、`thick`、`shadow` のいずれか。 |
+| `foreground-color`    | `"black"`       | 前景色。                                                                      |
+| `background-color`    | `"cornsilk1"`   | 背景色。                                                                      |
+| `comment-single-line` | `"grey50"`      | 1行コメント。                                                                 |
+| `comment-multi-line`  | `"grey50"`      | 複数行コメント。                                                              |
+| `string-multi-line`   | `"darkred"`     | 複数行文字列。Pythonのみ。                                                    |
+| `preprocessor`        | `"grey30"`      | プリプロセッサ。C/C++のみ。                                                   |
+| `keyword`             | `"dodgerblue2"` | キーワード。                                                                  |
+| `regex-literal`       | `"red"`         | 正規表現リテラル。                                                            |
+| `string-literal`      | `"darkred"`     | 文字列リテラル。                                                              |
+| `number`              | `"lime"`        | 数値。                                                                        |
+| `function`            | `"darkorange3"` | 関数呼び出し。                                                                |
+| `variable-capital`    | `"green4"`      | 大文字開始変数名。`Variable` のような形式。                                   |
+| `variable`            | `"cyan1"`       | 小文字開始変数名。`variable` のような形式。                                   |
 
 ### タイトル（カバーページ）・目次
 
@@ -1156,6 +1239,8 @@ KiTTy はタイトル（カバーページ）、
 
 変更可能なスタイル・パラメータの詳細に関しては、「\\nameref{スタイル}」をご参照ください。
 
+<pagebreak />
+
 ### 見出し
 
 章、節といった見出しは、通常の Markdown における `#` 記号で示します。
@@ -1203,7 +1288,7 @@ KiTTy はタイトル（カバーページ）、
 インライン・コマンド（\\nameref{インライン・コマンド}）、KiTTy コマンド（\\nameref{KiTTy コマンド}）を使用することはできます。
 また、引用はネストすることが可能です。
 その場合、引用は全て段落として認識されます。
-インデントをしない場合、段落の冒頭に `\\noindent` を付けることで解除します。
+インデントをしたくない場合、段落の冒頭に `\\noindent` を付けることでインデントをしないようにすることができます。
 例えば、本書の冒頭の文章を一部ネストさせるように修正して引用してみましょう。
 
 ```
@@ -1476,23 +1561,25 @@ Markdown 記法の中に、HTML で記載するコマンドがいくつか存在
 <context caption="単独処理コマンド"/>
 <context limit-column="0"/>
 
-|          コマンド          |                                              内容                                               |
-| -------------------------- | ----------------------------------------------------------------------------------------------- |
-| `\TeX`                     | \\TeX のロゴを出力する。                                                                        |
-| `\LaTeX`                   | \\LaTeX のロゴを出力する。                                                                      |
-| `\KaTeX`                   | \\KaTeX のロゴを出力する。                                                                      |
-| `\noindent`                | インデント処理を打ち消す。インデントしないパラグラフを生成する。                                |
-| `\apos`                    | アポストロフィーを出力する。                                                                    |
-| `\copyright`               | コピーライト（\\copyright）を出力する。                                                         |
-| `\hs`                      | 区切りスペース（小文字 i の幅）のサイズ分の空白を出力する。                                     |
-| `\hspace{width}`           | `width` で指定された幅（単位指定可）分 X 座標を変更する（プラスの値で右方向）。                 |
-| `\vspace{height}`          | `height` で指定された高さ（単位指定可）分 Y 座標を変更する（プラスの値で下方向）。              |
-| `\ref{label}`              | `label` で指定された番号に対するクロス・リファレンスを生成する。                                |
-| `\pageref{label}`          | `label` で指定されたページに対するクロス・リファレンスを生成する。                              |
-| `\textref{label}`          | `label` で指定されたテキストに対するクロス・リファレンスを生成する。                            |
-| `\nameref{label}`          | `label` で指定された「番号＋テキスト」に対するクロス・リファレンスを生成する。                  |
-| `\pack{text}`              | `text` の内容を改行させずひとまとまりとして認識させる。                                         |
-| `\ruby[Ruby]{Parent-Text}` | `Parent-Text` の上部にルビ（`Ruby`）を表記する。（左記表記での例：\\ruby\[Ruby\]{Parent-Text}） |
+|          コマンド          |                                                                             内容                                                                             |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `\TeX`                     | \\TeX のロゴを出力する。                                                                                                                                     |
+| `\LaTeX`                   | \\LaTeX のロゴを出力する。                                                                                                                                   |
+| `\KaTeX`                   | \\KaTeX のロゴを出力する。                                                                                                                                   |
+| `\noindent`                | インデント処理を打ち消す。インデントしないパラグラフを生成する。                                                                                             |
+| `\apos`                    | アポストロフィーを出力する。                                                                                                                                 |
+| `\copyright`               | コピーライト（\\copyright）を出力する。                                                                                                                      |
+| `\hs`                      | 区切りスペース（小文字 i の幅）サイズの空白を出力する。                                                                                                      |
+| `\hspace{width}`           | `width` で指定された幅（単位指定可）分 X 座標を変更する（プラスの値で右方向）。                                                                              |
+| `\vspace{height}`          | `height` で指定された高さ（単位指定可）分 Y 座標を変更する（プラスの値で下方向）。                                                                           |
+| `\ref{label}`              | `label` で指定された番号に対するクロス・リファレンスを生成する。                                                                                             |
+| `\pageref{label}`          | `label` で指定されたページに対するクロス・リファレンスを生成する。                                                                                           |
+| `\textref{label}`          | `label` で指定されたテキストに対するクロス・リファレンスを生成する。                                                                                         |
+| `\nameref{label}`          | `label` で指定された「番号＋テキスト」に対するクロス・リファレンスを生成する。                                                                               |
+| `\pack{text}`              | `text` の内容を改行させずひとまとまりとして認識させる。                                                                                                      |
+| `\ruby[Ruby]{Parent-Text}` | `Parent-Text` の上部にルビ（`Ruby`）を表記する。（左記表記での例：\\ruby\[Ruby\]{Parent-Text}）                                                              |
+| `\arrow{direction}`        | 矢印を出力する。`direction` には `left`、`right`、`up`、`down`、`left-right`、`up-down`、`left-up`、`right-up`、`right-down`、`left-down` のいずれかを指定。 |
+| `\unicode{code}`           | `code` で示したユニコード文字を出力する。                                                                                                                    |
 
 # 機能拡張方法
 

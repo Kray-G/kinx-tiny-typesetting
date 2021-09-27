@@ -224,7 +224,7 @@ By executing it as below on a command prompt, you can install the latest package
 $ kip install typesetting
 ```
 
-#### Linus
+#### Linux
 
 It is almost same as Windows, but you need an administrator privilege on Linux. Use the `sudo` command if necessary.
 
@@ -1040,22 +1040,35 @@ class Test {
 Specified a language, a predefined functionality will be worked.
 By the way, a language is specified right after <backq3 />, and use `:` as a separator for options.
 
-| Language  |                                     Meaning                                      |
-| --------- | -------------------------------------------------------------------------------- |
-| `math`    | This means a Math syntax. See \\nameref{Math formula and equations} for details. |
-| `chart`   | This means a Chart syntax. See \\nameref{Chart} for details.                     |
-| `console` | A text color is white and a background color is black.                           |
+<context label="Table:CodeLangOption"/>
+<context caption="The Value List of Code Language"/>
+<context limit-column="0"/>
+
+|      Language      |                                     Meaning                                      |
+| ------------------ | -------------------------------------------------------------------------------- |
+| `math`             | This means a Math syntax. See \\nameref{Math formula and equations} for details. |
+| `chart`            | This means a Chart syntax. See \\nameref{Chart} for details.                     |
+| `console`          | A text color is white and a background color is black.                           |
+| `JSON`             | Code highlighting with JSON style.                                               |
+| `c`、`c++`、`cpp`  | Code highlighting with C/C++ style.                                              |
+| `javascript`、`js` | Code highlighting with JavaScript style.                                         |
+| `java`             | Code highlighting with Java style.                                               |
+| `kinx`             | Code highlighting with Kinx style.                                               |
+| `ruby`             | Code highlighting with Ruby style.                                               |
+| `python`           | Code highlighting with Python style.                                             |
 
 ##### lineNumber
 
 Specify `true` or `false` to the `lineNumber` option.
+This is a parameter about showing a line number inside box.
+It will be shown by default, but it would follow the design of each language if the language were specified.
 
 ##### box
 
 The available values for the `box` option are as follows.
 
 <context label="Table:CodeBoxOption"/>
-<context caption="The available values for box"/>
+<context caption="The Available Values for Box"/>
 <context limit-column="0"/>
 
 |    Value     |                Meaning                 |
@@ -1069,6 +1082,74 @@ The available values for the `box` option are as follows.
 
 You can change a text color and a background color by `color` or `bgcolor`.
 See \\nameref{Color Examples} for the colors you can specify.
+
+#### Syntax Highlighting
+
+Specifying the programming language, the code will be outputted with syntax highlighting.
+See \\nameref{Table:CodeLangOption} for the languages you can specify.
+Now the color except a keyword color is same for each language, but you can change it as follows.
+
+```html
+<code-style lang="ruby" name="box" value="shadow" />
+<code-style lang="ruby" name="background-color" value="lightcyan1" />
+```
+
+<code-style lang="ruby" name="box" value="shadow" />
+<code-style lang="ruby" name="background-color" value="lightcyan1" />
+
+The change like this will affect to only Ruby.
+
+```kinx
+// This is a kinx block.
+function fib(n) {
+    if (n < 3) return n;
+    return fib(n-2) + fib(n-1);
+}
+System.println(fib(34));
+```
+
+```python
+# This is a python block.
+def fib(n):
+    if n < 3:
+        return n
+    else:
+        return fib(n-1) + fib(n-2)
+print fib(34)
+```
+
+```ruby
+# This is a ruby block.
+def fib(n)
+  return n if n < 3
+  fib(n-1) + fib(n-2)
+end
+p fib(34)
+```
+
+<context label="Table:CodeStyleOption"/>
+<context caption="The List of Code Style Value"/>
+<context limit-column="0"/>
+
+The attribute name you can specify is as follows.
+Regarding the color, see \\nameref{Color Examples}.
+
+|       Attribute       |  Default Value  |                                    Remarks                                    |
+| --------------------- | --------------- | ----------------------------------------------------------------------------- |
+| `box`                 | `"normal"`      | Box style. The value can be `noline`, `normal`, `thin`, `thick`, or `shadow`. |
+| `foreground-color`    | `"black"`       | Foreground color.                                                             |
+| `background-color`    | `"cornsilk1"`   | Background color.                                                             |
+| `comment-single-line` | `"grey50"`      | Single line comment.                                                          |
+| `comment-multi-line`  | `"grey50"`      | Multi-line comment.                                                           |
+| `string-multi-line`   | `"darkred"`     | Multi-line string. Only for Python.                                           |
+| `preprocessor`        | `"grey30"`      | Preprocessor. Only for C/C++.                                                 |
+| `keyword`             | `"dodgerblue2"` | Keywords.                                                                     |
+| `regex-literal`       | `"red"`         | Regular expression literal.                                                   |
+| `string-literal`      | `"darkred"`     | String literal.                                                               |
+| `number`              | `"lime"`        | Numbers.                                                                      |
+| `function`            | `"darkorange3"` | Function call.                                                                |
+| `variable-capital`    | `"green4"`      | Variable started with Uppercase. It is like `Variable`.                       |
+| `variable`            | `"cyan1"`       | Variable started with lowercase. It is like `variable`.                       |
 
 ### Title, Cover Page, and Contents
 
@@ -1136,6 +1217,8 @@ See \\nameref{Chapter Design} for the chapter design.
 
 See \\nameref{Style} for details of style parameters which you can change.
 
+<pagebreak />
+
 ### Heading
 
 The heading like Chapter and Section will be shown by the line lead by `#` as a normal Markdown syntax.
@@ -1165,12 +1248,12 @@ The following list is the target which you can use for Cross-Reference.
 <context caption="Command List for Cross-Reference"/>
 <context limit-column="0"/>
 
-|      Command      |                                       Shown Text                                       |
-| ----------------- | -------------------------------------------------------------------------------------- |
-| `\ref{label}`     | A chapter number, a section number, a figure and table number, or Math formula number. |
-| `\textref{label}` | The text for a label.                                                                  |
-| `\nameref{label}` | ''Number and Text'' for a label.                                                       |
-| `\pageref{label}` | The page number for a label.                                                           |
+|      Command      |                            Shown Text                             |
+| ----------------- | ----------------------------------------------------------------- |
+| `\ref{label}`     | A chapter, a section, a figure and table, or Math formula number. |
+| `\textref{label}` | The text for a label.                                             |
+| `\nameref{label}` | ''Number and Text'' for a label.                                  |
+| `\pageref{label}` | The page number for a label.                                      |
 
 If the reference appears before an actual source of the reference, it can not be solved.
 In that case, re-run KiTTy to solve the reference.
@@ -1457,23 +1540,25 @@ For example, you can write `\\noindent{}`.
 <context caption="Standalone Commands"/>
 <context limit-column="0"/>
 
-|          Command           |                                              Meaning                                              |
-| -------------------------- | ------------------------------------------------------------------------------------------------- |
-| `\TeX`                     | \\TeX logo will be shown.                                                                         |
-| `\LaTeX`                   | \\LaTeX logo will be shown.                                                                       |
-| `\KaTeX`                   | \\KaTeX logo will be shown.                                                                       |
-| `\noindent`                | Indentation will be erased. The paragraph without indentation will be generated.                  |
-| `\apos`                    | Apostrophe will be shown.                                                                         |
-| `\copyright`               | Copyright (\\copyright) will be shown.                                                            |
-| `\hs`                      | A space, which width is the width of a small i, will be shown.                                    |
-| `\hspace{width}`           | To change the X position by the value of `width`. To move to the right by a plus value.           |
-| `\vspace{height}`          | To change the Y position by the value of `height`. To move to the down by a plus value.           |
-| `\ref{label}`              | To generate a Cross-Reference with the number specified by `label`.                               |
-| `\pageref{label}`          | To generate a Cross-Reference to the page specified by `label`.                                   |
-| `\textref{label}`          | To generate a Cross-Reference with the text specified by `label`.                                 |
-| `\nameref{label}`          | To generate a Cross-Reference with the number and the text specified by `label`.                  |
-| `\pack{text}`              | To make it be recognized as no line breaking in `text`.                                           |
-| `\ruby[Ruby]{Parent-Text}` | To show `Ruby` on the top of `Parent-Text`. For example of the left, \\ruby\[Ruby\]{Parent-Text}. |
+|          Command           |                                                                         Meaning                                                                         |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `\TeX`                     | \\TeX logo will be shown.                                                                                                                               |
+| `\LaTeX`                   | \\LaTeX logo will be shown.                                                                                                                             |
+| `\KaTeX`                   | \\KaTeX logo will be shown.                                                                                                                             |
+| `\noindent`                | Indentation will be erased. The paragraph without indentation will be generated.                                                                        |
+| `\apos`                    | Apostrophe will be shown.                                                                                                                               |
+| `\copyright`               | Copyright (\\copyright) will be shown.                                                                                                                  |
+| `\hs`                      | A space which is the width of a small i, will be shown.                                                                                                 |
+| `\hspace{width}`           | To change the X position by the value of `width`. To move to the right by a plus value.                                                                 |
+| `\vspace{height}`          | To change the Y position by the value of `height`. To move to the down by a plus value.                                                                 |
+| `\ref{label}`              | To generate a Cross-Reference with the number specified by `label`.                                                                                     |
+| `\pageref{label}`          | To generate a Cross-Reference to the page specified by `label`.                                                                                         |
+| `\textref{label}`          | To generate a Cross-Reference with the text specified by `label`.                                                                                       |
+| `\nameref{label}`          | To generate a Cross-Reference with the number and the text specified by `label`.                                                                        |
+| `\pack{text}`              | To make it be recognized as no line breaking in `text`.                                                                                                 |
+| `\ruby[Ruby]{Parent-Text}` | To show `Ruby` on the top of `Parent-Text`. For example of the left, \\ruby\[Ruby\]{Parent-Text}.                                                       |
+| `\arrow{direction}`        | To output an arrow. The `direction` can be `left`, `right`, `up`, `down`, `left-right`, `up-down`, `left-up`, `right-up`, `right-down`, or `left-down`. |
+| `\unicode{code}`           | To output the character specified by the `code`.                                                                                                        |
 
 # How To Extend Features
 

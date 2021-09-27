@@ -121,4 +121,26 @@ int main() {
 }
 ```
 
+## Markdown
+
+```markdown
+# Header 1
+## Header 2
+### Header 3
+
+<code-style lang="ruby" name="box" value="shadow" />
+<code-style lang="ruby" name="background-color" value="lightcyan1">
+</code-style>
+```
+
+You can see the differences between code blocks.
+
+## HTML
+
+```html
+<code-style lang="ruby" name="box" value="shadow" />
+<code-style lang="ruby" name="background-color" value="lightcyan1">
+</code-style>
+```
+
 You can see the differences between code blocks.
