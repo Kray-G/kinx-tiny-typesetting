@@ -141,6 +141,11 @@ namespace Typesetting {
                         }
                     }
                 }
+                for (var i = 0, l = lens.length(); i < l; ++i) {
+                    if (lens[i] < limitWidth_) {
+                        lens[i] = limitWidth_;
+                    }
+                }
                 var widthlist;
                 do {
                     var total = 0;
