@@ -64,6 +64,9 @@ namespace Typesetting {
                     var start = pos;
                     for (var i = 0; i < pl; ++i) {
                         var pi = pats[i];
+                        if (pi.position.isDefined && pi.position != pos) {
+                            continue;
+                        }
                         var p = pi.pattern;
                         p.reset(line);
                         p.setPosition(pos);
@@ -75,18 +78,55 @@ namespace Typesetting {
                                     pos: { start: buf.start, end: buf.end },
                                 });
                             }
-                            words.push({
-                                name: pi.name,
-                                word: line.subString(found.begin, found.end - found.begin),
-                                color: pi.color ?? theme_[pi.name],
-                                pos: { start: found.begin, end: found.end },
-                                bold: pi.bold,
-                            });
+                            var color = pi.color ?? theme_[pi.name];
+                            if (color.isArray) {
+                                var group = p.group;
+                                var ps = color.map { => [group[_2].begin, group[_2].end] };
+                                var s = found.begin;
+                                for (var j = 1, jl = ps.length(); j < jl; ++j) {
+                                    var pss = ps[j][0];
+                                    var pse = ps[j][1];
+                                    if (s < pss) {
+                                        words.push({
+                                            name: pi.name,
+                                            word: line.subString(s, pss - s),
+                                            color: color[0],
+                                            pos: { start: s, end: pss },
+                                            bold: pi.bold,
+                                        });
+                                    }
+                                    words.push({
+                                        name: pi.name,
+                                        word: line.subString(pss, pse - pss),
+                                        color: color[j],
+                                        pos: { start: pss, end: pse },
+                                        bold: pi.bold,
+                                    });
+                                    s = pse;
+                                }
+                                if (s < found.end) {
+                                    words.push({
+                                        name: pi.name,
+                                        word: line.subString(s, found.end - s),
+                                        color: color[0],
+                                        pos: { start: s, end: found.end },
+                                        bold: pi.bold,
+                                    });
+                                }
+                            } else {
+                                words.push({
+                                    name: pi.name,
+                                    word: line.subString(found.begin, found.end - found.begin),
+                                    color: color,
+                                    pos: { start: found.begin, end: found.end },
+                                    bold: pi.bold,
+                                });
+                            }
                             if (pi.end.isRegex) {
-                                endtag_ = { pattern: pi.end, color: pi.color, name: pi.name };
+                                endtag_ = { pattern: pi.end, color: color, name: pi.name };
                                 pos = len;
                             } else if (pi.end.group.isInteger) {
-                                endtag_ = { pattern: new Regex(p.group[pi.end.group].string), color: pi.color, name: pi.name };
+                                endtag_ = { pattern: new Regex(p.group[pi.end.group].string), color: color, name: pi.name };
                                 pos = len;
                             } else {
                                 pos = found.end;
@@ -154,6 +194,14 @@ namespace Typesetting {
                 var margin = writer.getMargin();
                 var numberSize = info.base.code.numberSize;
                 var codeFontSize = info.base.code.fontSize;
+                var lineFeedWidthBase = codeFontSize * 1.3;
+                var texts = code_.trim().split(/\r?\n/);
+
+                var chklines = (texts.length() >= 2) ? 4 : (texts.length() + 2);
+                var lb = writer.getPos().y - lineFeedWidthBase * chklines - info.base.code.padding * 2;
+                if (0 < lb && lb <= writer.getYBottom()) {
+                    writer.pageBreak();
+                }
 
                 var lineNumber = opts_.lineNumber ?? opts_.syntax.lineNumber ?? theme_.lineNumber ?? true;
                 const shadowWidth = 3;
@@ -171,7 +219,6 @@ namespace Typesetting {
                 }
                 var boxtype = opts_.box ?? opts_.syntax.box ?? theme_.box ?? Typesetting.BOX_SHADOW;
                 var shadow = boxtype[1] == 0x01;
-                var lineFeedWidthBase = codeFontSize * 1.3;
                 var pageMargin = writer.makeMarginSize();
                 var left = base - info.base.code.padding;
                 var right = (pageMargin.pageWidth - opts_.margin.right) + (shadow ? 0 : 2);
@@ -195,7 +242,6 @@ namespace Typesetting {
                 }
 
                 var isTop = false;
-                var texts = code_.trim().split(/\r?\n/);
                 var tlast = texts.length() - 1;
                 texts.each { &(line, i)
                     if (isTop) {
@@ -219,7 +265,7 @@ namespace Typesetting {
                         writeLineWithColor(line, context.font.fontObj, codeFontSize, info, context, core, writer, lineFeedWidthBase);
                     }
 
-                    var isBreak = writer.getPos(true).y < 0;
+                    var isBreak = writer.getPos(true).y <= writer.getYBottom();
                     if (!isBreak) {
                         linetop1 = writer.getLineTop(context.font.fontObj, context.font.codeFontSize);
                         var height = lineprev - linetop1;
