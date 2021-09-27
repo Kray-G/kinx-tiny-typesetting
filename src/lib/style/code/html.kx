@@ -1,0 +1,45 @@
+namespace Typesetting {
+namespace Style {
+
+    Typesetting.Style.Code[__FILE__.stem()] = {
+        box:             Typesetting.BOX_NORMAL,
+        lineNumber:      false,
+        foregroundColor: "black",
+        backgroundColor: "white",
+        pattern: [
+            {
+                name: "comment-single-line",
+                pattern: /<!--.+?-->/,
+                color: "grey70",
+            },
+            {
+                name: "comment-multi-line",
+                pattern: /<!--/,
+                color: "grey70",
+                end: /-->/,
+            },
+            {
+                name: "tag-name",
+                pattern: /<([-_a-zA-Z][-_a-zA-Z0-9]*)/,
+                color: [ "grey50", "blue" ],
+            },
+            {
+                name: "attributes",
+                pattern: /(\S+)\s*=\s*([^> \r\t\n]+)/,
+                color: [ "grey50", "cyan1", "orange3" ],
+            },
+            {
+                name: "end-tag",
+                pattern: /<\/([-_a-zA-Z][-_a-zA-Z0-9]*)>/,
+                color: [ "grey50", "blue" ],
+            },
+            {
+                name: "tag-end-mark",
+                pattern: /\/>|>/,
+                color: "grey50",
+            },
+        ],
+    };
+
+} # namespace Style
+} # namespace Typesetting

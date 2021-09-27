@@ -1,0 +1,58 @@
+namespace Typesetting {
+namespace Style {
+
+    Typesetting.Style.Code[__FILE__.stem()] = {
+        box:             Typesetting.BOX_NORMAL,
+        lineNumber:      false,
+        foregroundColor: "black",
+        backgroundColor: "white",
+        pattern: [
+            {
+                name: "comment-single-line",
+                pattern: /<!--.+?-->/,
+                color: "grey70",
+            },
+            {
+                name: "comment-multi-line",
+                pattern: /<!--/,
+                color: "grey70",
+                end: /-->/,
+            },
+            {
+                name: "header",
+                pattern: /#+\s*(.+)/,
+                color: [ "cyan1", "blue" ],
+                position: 0,
+            },
+            {
+                name: "item",
+                pattern: /\s*[-\*]+\s*(.+)/,
+                color: [ "blue", "black" ],
+                position: 0,
+            },
+            {
+                name: "enum",
+                pattern: /\s*[0-9]+\.\s*(.+)/,
+                color: [ "green", "black" ],
+                position: 0,
+            },
+            {
+                name: "tag-single-line",
+                pattern: /<([-_a-zA-Z][-_a-zA-Z0-9]*)\s+(.+)\s*\/>/,
+                color: [ "grey50", "blue", "cyan1" ],
+            },
+            {
+                name: "tag-multi-line",
+                pattern: /<([-_a-zA-Z][-_a-zA-Z0-9]*)\s+(.+)\s*>/,
+                color: [ "grey50", "blue", "cyan1" ],
+            },
+            {
+                name: "tag-multi-line",
+                pattern: /<\/([-_a-zA-Z][-_a-zA-Z0-9]*)>/,
+                color: [ "grey50", "blue" ],
+            },
+        ],
+    };
+
+} # namespace Style
+} # namespace Typesetting
