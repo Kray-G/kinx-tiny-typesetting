@@ -361,6 +361,7 @@ namespace Typesetting {
                             r = true;
                         }
                     } else if (v.startsWith("<code-style ")) {
+                        flushDoc();
                         var doc = Xml.parseString(v);
                         var elem = doc.documentElement();
                         var theme = elem.getAttribute('theme') || null;
@@ -373,23 +374,23 @@ namespace Typesetting {
                                 if (theme) {
                                     style.theme = theme;
                                 }
-                                var fgColor = (elem.getAttribute('fgColor') || elem.getAttribute('foregroundColor')).trim();
-                                if (fgColor) {
-                                    style.foregroundColor = (fgColor[0] == '{'[0] || fgColor[0] == '['[0]) ? JSON.parse(fgColor) : fgColor;
-                                }
-                                var bgColor = elem.getAttribute('bgColor') || elem.getAttribute('backgroundColor');
-                                if (bgColor) {
-                                    style.backgroundColor = (bgColor[0] == '{'[0] || bgColor[0] == '['[0]) ? JSON.parse(bgColor) : bgColor;
-                                }
                                 var name = elem.getAttribute('name');
                                 var value = elem.getAttribute('value');
                                 if (name && value) {
-                                    style.pattern.each {
-                                        if (_1.name == name) {
-                                            _1.color = (value[0] == '{'[0] || value[0] == '['[0]) ? JSON.parse(value) : value;
-                                            return false;
-                                        }
-                                    };
+                                    if (name == "box") {
+                                        style.box = Typesetting["BOX_" + value.toUpper()] ?? Typesetting.BOX_NORMAL;
+                                    } else if (name == "foreground-color") {
+                                        style.foregroundColor = (value[0] == '{'[0] || value[0] == '['[0]) ? JSON.parse(value) : value;
+                                    } else if (name == "background-color") {
+                                        style.backgroundColor = (value[0] == '{'[0] || value[0] == '['[0]) ? JSON.parse(value) : value;
+                                    } else {
+                                        style.pattern.each {
+                                            if (_1.name == name) {
+                                                _1.color = (value[0] == '{'[0] || value[0] == '['[0]) ? JSON.parse(value) : value;
+                                                return false;
+                                            }
+                                        };
+                                    }
                                 }
                             }
                         }
