@@ -274,6 +274,14 @@ namespace Typesetting {
             direction_ = direction;
         }
 
+        public getYBottom() {
+            if (ybottom_ > 0) {
+                return ybottom_;
+            }
+            var margin = @makeMarginSize();
+            return margin.bottom;
+        }
+
         public setMargin(margin) {
             margin_ = margin.clone();
             marginCache_ = null;
