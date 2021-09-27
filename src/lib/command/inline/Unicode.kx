@@ -1,0 +1,17 @@
+namespace Typesetting {
+
+    namespace Command {
+
+        class Unicode(info_, context_) {
+            public exec(params, value) {
+                var v = value.split(/\s*,\s*/).map { => Integer.parseInt(_1, 0) };
+                var w = new Typesetting.Word(info_).setWord(context_.font.fontObj, context_.font.fontSize, String.getStringFromCode(v));
+                w.noGlue = true;
+                w.noPrevGlue = true;
+                return w;
+            }
+        }
+
+    } # namespace Command
+
+} # namespace Typesetting
