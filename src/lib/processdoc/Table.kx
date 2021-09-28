@@ -1,9 +1,6 @@
 namespace Typesetting {
 
     const TOO_BIG_SPACE = 6553600.0;
-    var hyphenPenalty_ = Hypher.hyphenPenalty_;
-    var Linebreak = Typesetting.Linebreak;
-    var Word = Typesetting.Word;
 
     namespace ProcessDoc {
 
@@ -11,10 +8,28 @@ namespace Typesetting {
 
             var pos_, margin_, width_, top_, left_;
             var savedPos_, savedMargin_;
-            var bottom_, align_, header_;
+            var bottom_, align_, valign_, header_;
             var offsetY_ = 0;
             var limitWidthBase_ = 50;
             var limitWidth_ = limitWidthBase_;
+
+            private getPrevLine(body, s) {
+                for (var i = s - 1; 0 <= i; --i) {
+                    if (!body[i].isTableHLine) {
+                        return body[i];
+                    }
+                }
+                return null;
+            }
+
+            private getNextLine(body, s, l) {
+                for (var i = s + 1; i <= l; ++i) {
+                    if (!body[i].isTableHLine) {
+                        return body[i];
+                    }
+                }
+                return null;
+            }
 
             private adjustWidth(lens, sorted) {
                 var l = sorted.length() - 1;
@@ -76,6 +91,7 @@ namespace Typesetting {
                     left_ += margin_.width - width_;
                 }
 
+                valign_ = table.cellVAlign || "top";
                 var alignPos = 0;
                 var align = table.cellAlign;
                 var lastLines = align.match(/\|+$/)[0];
@@ -84,7 +100,6 @@ namespace Typesetting {
                     align = align.subString(0, align.length() - lastLineCount);
                 }
                 var al = align.length();
-                var alast = al - 1;
                 for (var i = 0; i < al; ++i) {
                     if (align[i] == '|'[0]) {
                         align_[alignPos] ??= {};
@@ -126,16 +141,32 @@ namespace Typesetting {
                         var mlast = m - 1;
                         for (var j = 0; j < m; ++j) {
                             var b = ba[j];
-                            var nextcolspan = j < mlast && ba[j+1] == "<";
-                            var colspan = j > 0 && b == "<";
-                            var rowspan = i > 0 && b == "^";
-                            var w = rowspan ? lens[j-1] : measureText(b, ba.isHeader);
+                            var nextcolspan = j < mlast && ba[j+1] == "<.";
+                            var colspan = j > 0 && b == "<.";
+                            var rowspan = (i > 0 && b == "^.") || (colspan && ba[j-1].rowspan);
+                            if (!colspan && rowspan && getPrevLine(body, i)[j].colspan) {
+                                colspan = true;
+                            }
+                            var halign = null, valign = null, changed = true;
+                            do {
+                                switch (b.subString(0, 2)) {
+                                when "l.": halign = "left";   b = b.subString(2).trimLeft();
+                                when "c.": halign = "center"; b = b.subString(2).trimLeft();
+                                when "r.": halign = "right";  b = b.subString(2).trimLeft();
+                                when "t.": valign = "top";    b = b.subString(2).trimLeft();
+                                when "m.": valign = "middle"; b = b.subString(2).trimLeft();
+                                when "b.": valign = "bottom"; b = b.subString(2).trimLeft();
+                                else:
+                                    changed = false;
+                                }
+                            } while (changed);
+                            var w = rowspan ? lens[j] : measureText(b, ba.isHeader);
                             if (table.limitColumn.isDefined && j == table.limitColumn) {
                                 if (limitWidth_ < w) {
                                     limitWidth_ = w;
                                 }
                             }
-                            ba[j] = { text: colspan ? "" : b, width: w, colspan: colspan, rowspan: rowspan };
+                            ba[j] = { text: (colspan || rowspan) ? "" : b, width: w, colspan, rowspan, valign, halign };
                             if (!colspan && !nextcolspan && lens[j] < w) {
                                 lens[j] = w;
                                 texts[j] = {
@@ -176,6 +207,8 @@ namespace Typesetting {
 
             private makeLines(table, widthlist) {
                 top_ = null;
+                var rowadjst = [];
+                var rowbase = [];
                 var totalLineFeedWidth = 0;
                 var cellPadding = info_.base.table.cellPadding;
                 var cellPadding2 = cellPadding * 2;
@@ -184,6 +217,7 @@ namespace Typesetting {
                     var ba = table.body[i];
                     var isNextline = table.body[i+1].isTableHLine;
                     if (!ba.isTableHLine) {
+                        var nextLine = getNextLine(table.body, i, l-1);
                         totalLineFeedWidth = 0;
                         ba.y = y;
                         var isHeader = ba.isHeader;
@@ -214,11 +248,32 @@ namespace Typesetting {
                             context_.noIndent = noIndent;
                             b.totalLineFeedWidth = b.lines[0].totalLineFeedWidth + additional;
                             b.y = y + cellPadding + b.lines[0].diffHeight;
-                            if (totalLineFeedWidth < b.totalLineFeedWidth) {
+                            if (!nextLine[j].rowspan && totalLineFeedWidth < b.totalLineFeedWidth) {
                                 totalLineFeedWidth = b.totalLineFeedWidth;
+                            }
+                            if (!b.rowspan && nextLine[j].rowspan) {
+                                rowadjst[j] = b.totalLineFeedWidth;
+                                rowbase[j] = { b, ba };
+                                b.spanHeight = 0;
                             }
                             if (lineFeedWidth < b.lines[0].lineFeedWidth) {
                                 lineFeedWidth = b.lines[0].lineFeedWidth;
+                            }
+                        }
+                        for (var j = 0, m = ba.length(); j < m; ++j) {
+                            if (nextLine[j].rowspan) {
+                                rowadjst[j] -= totalLineFeedWidth;
+                                rowbase[j].b.spanHeight += totalLineFeedWidth;
+                            } else {
+                                if (totalLineFeedWidth < rowadjst[j]) {
+                                    totalLineFeedWidth = rowadjst[j];
+                                }
+                                rowadjst[j] = 0;
+                                rowbase[j].b.spanHeight += totalLineFeedWidth;
+                                if (rowbase[j].ba.spanHeight < rowbase[j].b.spanHeight) {
+                                    rowbase[j].ba.spanHeight = rowbase[j].b.spanHeight;
+                                }
+                                rowbase[j] = null;
                             }
                         }
                         ba.totalLineFeedWidth = totalLineFeedWidth;
@@ -249,12 +304,15 @@ namespace Typesetting {
                 }
             }
 
-            private outputLine(writer, array, count, offset, y) {
+            private outputLine(writer, array, count, offset, y, nextLine) {
                 var xbase = left_;
                 y ??= array.y + offsetY_;
                 for (var i = 0, l = array.length() - 1; i <= l; ++i) {
                     var h = array[i];
-                    drawHLine(writer, offset, count, xbase, y, h.width, 0, 0.4);
+                    var noHLine = nextLine.isArray ? nextLine[i].rowspan : false;
+                    if (!noHLine) {
+                        drawHLine(writer, offset, count, xbase, y, h.width, 0, 0.4);
+                    }
                     xbase += h.width;
                 }
             }
@@ -262,11 +320,26 @@ namespace Typesetting {
             private outputTextImpl(array, writer, xbase, ybase, totalLineFeedWidth) {
                 var cellPadding = info_.base.table.cellPadding;
                 for (var i = 0, l = array.length(); i < l; ++i) {
-                    var isCenter = align_[i].align == 'c'[0];
-                    var isRight = align_[i].align == 'r'[0];
                     var h = array[i];
+                    var halign = h.halign ?? (align_[i].align == 'c'[0] ? "center" : (align_[i].align == 'r'[0] ? "right" : "left"));
+                    var isCenter = halign == "center";
+                    var isRight  = halign == "right";
                     x += cellPadding;
                     y = h.y + offsetY_;
+                    var valign = h.valign ?? valign_;
+                    if (valign == "middle") {
+                        if (h.totalLineFeedWidth < totalLineFeedWidth) {
+                            y -= (totalLineFeedWidth - h.totalLineFeedWidth) / 2;
+                        } else if (h.totalLineFeedWidth < h.spanHeight) {
+                            y -= (h.spanHeight - h.totalLineFeedWidth) / 2;
+                        }
+                    } else if (valign == "bottom") {
+                        if (h.totalLineFeedWidth < totalLineFeedWidth) {
+                            y -= totalLineFeedWidth - h.totalLineFeedWidth;
+                        } else if (h.totalLineFeedWidth < h.spanHeight) {
+                            y -= h.spanHeight - h.totalLineFeedWidth;
+                        }
+                    }
                     h.lines.each { &(line)
                         x = xbase + cellPadding;
                         var offsetX = 0;
@@ -295,13 +368,15 @@ namespace Typesetting {
                 }
             }
 
-            private outputText(writer, table, array) {
+            private outputText(writer, table, array, nextLine) {
                 var xbase = left_;
                 var ybase = array.y + offsetY_;
                 var totalLineFeedWidth = array.totalLineFeedWidth;
+                var spanHeight = array.spanHeight;
+                var height = spanHeight < totalLineFeedWidth ? totalLineFeedWidth : spanHeight;
                 var checkY = ybase + totalLineFeedWidth - info_.base.table.cellPadding;
 
-                if (writer.isColumnBreakPoint(totalLineFeedWidth, checkY)) {
+                if (writer.isColumnBreakPoint(height, checkY)) {
                     writer.setPos({ x: xbase, y: checkY });
                     writer.columnBreak();
                     var colnum = writer.getColumnNumber();
@@ -317,12 +392,12 @@ namespace Typesetting {
                         if (header_.index >= 0) {
                             var hline0 = table.body[header_.index - 1];
                             if (hline0.isTableHLine) {
-                                outputLine(writer, header_, hline0.count, 0, ybase + header_.totalLineFeedWidth);
+                                outputLine(writer, header_, hline0.count, 0, ybase + header_.totalLineFeedWidth, null);
                             }
                         }
                         var hline1 = table.body[header_.index + 1];
                         if (hline1.isTableHLine) {
-                            outputLine(writer, header_, hline1.count, +1, ybase);
+                            outputLine(writer, header_, hline1.count, +1, ybase, null);
                         }
                     }
                     if (colnum == 0) {
@@ -341,14 +416,17 @@ namespace Typesetting {
                 var writer = info_.writer;
                 var ybase;
                 for (var i = 0, l = table.body.length() - 1; i <= l; ++i) {
+                    var nextLine = getNextLine(table.body, i, l);
                     var ba = table.body[i];
                     if (ba.isTableHLine) {
                         if (i == 0) {
                             var array = table.body[1];
                             if (array) {
                                 var totalLineFeedWidth = array.totalLineFeedWidth;
+                                var spanHeight = array.spanHeight;
+                                var height = spanHeight < totalLineFeedWidth ? totalLineFeedWidth : spanHeight;
                                 var checkY = array.y + totalLineFeedWidth + offsetY_;
-                                if (writer.isColumnBreakPoint(totalLineFeedWidth, checkY)) {
+                                if (writer.isColumnBreakPoint(height, checkY)) {
                                     if (writer.getPos().y >= 0) {
                                         writer.setPos({ x: -1, y: checkY });
                                         writer.columnBreak();
@@ -361,15 +439,15 @@ namespace Typesetting {
                                         offsetY_ = pos_.y - array[0].y - header_.totalLineFeedWidth;
                                     }
                                 }
-                                outputLine(writer, array, ba.count, 0, array.y + array.totalLineFeedWidth + offsetY_);
+                                outputLine(writer, array, ba.count, 0, array.y + array.totalLineFeedWidth + offsetY_, nextLine);
                             }
                         } else if (i == l) {
-                            outputLine(writer, table.body[i-1], ba.count, +2);
+                            outputLine(writer, table.body[i-1], ba.count, +2, null, nextLine);
                         } else {
-                            outputLine(writer, table.body[i-1], ba.count, +1);
+                            outputLine(writer, table.body[i-1], ba.count, +1, null, nextLine);
                         }
                     } else {
-                        ybase = outputText(writer, table, ba);
+                        ybase = outputText(writer, table, ba, nextLine);
                     }
                 }
                 return ybase;

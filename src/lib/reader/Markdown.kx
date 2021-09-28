@@ -715,6 +715,7 @@ namespace Typesetting {
             var hlineInside = getContextValue('hline-inside', true);
             var limitColumn = getContextValue('limit-column', true);
             var limitWidth = getContextValue('limit-width', true);
+            var cellVAlign = getContextValue('cell-valign', true);
             var cells = [];
             ast.rows.each { &(b, i)
                 b.each { &(c, j)
@@ -738,7 +739,7 @@ namespace Typesetting {
                 body.push(hlineHeader == "single" ? "---" : "===") if (hlineHeader);
                 var rowlast = ast.rows.length() - 1;
                 ast.rows.each { &(b, i)
-                    body.push(b.map(&(c, j) => inline_.makeInlineText(cells[i][j]) ));
+                    body.push(b.map(&(c, j) => inline_.makeInlineText(cells[i][j])));
                     if (i < rowlast) {
                         body.push(hlineInside == "single" ? "---" : "===") if (hlineInside);
                     } else {
@@ -749,6 +750,7 @@ namespace Typesetting {
                     label: label,
                     caption: caption,
                     cellAlign: aligns,
+                    cellVAlign: cellVAlign,
                     limitColumn: limitColumn ? Integer.parseInt(limitColumn) : null,
                     limitWidth: limitWidth ? Double.parseDouble(limitWidth) : null,
                     body: body,
