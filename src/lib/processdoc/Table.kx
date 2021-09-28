@@ -122,16 +122,21 @@ namespace Typesetting {
                             header_.index = i;
                         }
                         ++hpos;
-                        for (var j = 0, m = ba.length(); j < m; ++j) {
+                        var m = ba.length();
+                        var mlast = m - 1;
+                        for (var j = 0; j < m; ++j) {
                             var b = ba[j];
-                            var w = measureText(b, ba.isHeader);
+                            var nextcolspan = j < mlast && ba[j+1] == "<";
+                            var colspan = j > 0 && b == "<";
+                            var rowspan = i > 0 && b == "^";
+                            var w = rowspan ? lens[j-1] : measureText(b, ba.isHeader);
                             if (table.limitColumn.isDefined && j == table.limitColumn) {
                                 if (limitWidth_ < w) {
                                     limitWidth_ = w;
                                 }
                             }
-                            ba[j] = { text: b, width: w };
-                            if (lens[j] < w) {
+                            ba[j] = { text: colspan ? "" : b, width: w, colspan: colspan, rowspan: rowspan };
+                            if (!colspan && !nextcolspan && lens[j] < w) {
                                 lens[j] = w;
                                 texts[j] = {
                                     text: b,
@@ -184,10 +189,25 @@ namespace Typesetting {
                         var isHeader = ba.isHeader;
                         var lineFeedWidth = 0;
                         var additional = (isNextline ? cellPadding2 : cellPadding);
+                        ba[0].areaWidth = widthlist[0].areaWidth;
+                        ba[0].width = widthlist[0].width;
+                        var prev = ba[0];
+                        for (var j = 1, m = ba.length(); j < m; ++j) {
+                            var b = ba[j];
+                            if (b.colspan) {
+                                prev.areaWidth += widthlist[j].areaWidth + info_.base.table.cellPadding * 2;
+                                prev.width += widthlist[j].width;
+                                b.areaWidth = 0;
+                                b.width = 0;
+                            } else {
+                                b.areaWidth = widthlist[j].areaWidth;
+                                b.width = widthlist[j].width;
+                                prev = b;
+                            }
+                        }
                         for (var j = 0, m = ba.length(); j < m; ++j) {
                             var b = ba[j];
                             b.width = widthlist[j].width;
-                            b.areaWidth = widthlist[j].areaWidth;
                             var noIndent = context_.noIndent;
                             context_.noIndent = true;
                             b.lines = paragraph_.exec({ areaWidth: b.areaWidth }, isHeader ? "\\bold{%{b.text}}" : b.text);
@@ -247,8 +267,7 @@ namespace Typesetting {
                     var h = array[i];
                     x += cellPadding;
                     y = h.y + offsetY_;
-                    var last = h.lines.length() - 1;
-                    h.lines.each { &(line, i)
+                    h.lines.each { &(line)
                         x = xbase + cellPadding;
                         var offsetX = 0;
                         if (line.totalWidth != line.width) {
@@ -264,7 +283,7 @@ namespace Typesetting {
                         };
                         y -= line.lineFeedWidth;
                     };
-                    if (align_[i].left) {
+                    if (align_[i].left && !h.colspan) {
                         drawVLine(writer, i == 0 ? 0 : -1, align_[i].lcount, xbase,
                             ybase + totalLineFeedWidth, 0, totalLineFeedWidth, 0.4);
                     }
@@ -277,7 +296,7 @@ namespace Typesetting {
             }
 
             private outputText(writer, table, array) {
-                var xbase = left_, y = 0;
+                var xbase = left_;
                 var ybase = array.y + offsetY_;
                 var totalLineFeedWidth = array.totalLineFeedWidth;
                 var checkY = ybase + totalLineFeedWidth - info_.base.table.cellPadding;
