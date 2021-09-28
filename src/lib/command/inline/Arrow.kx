@@ -16,10 +16,7 @@ namespace Typesetting {
                     when "right-down"   : 0x2198
                     when "left-down"    : 0x2199
                     ;
-                var w = new Typesetting.Word(info_).setWord(context_.font.fontObj, context_.font.fontSize, String.getStringFromCode([code]));
-                w.noGlue = true;
-                w.noPrevGlue = true;
-                return w;
+                return new Typesetting.Word(info_).setWord(context_.font.fontObj, context_.font.fontSize, String.getStringFromCode([code]));
             }
         }
 
