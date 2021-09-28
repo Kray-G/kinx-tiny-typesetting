@@ -1097,7 +1097,7 @@ Now the color except a keyword color is same for each language, but you can chan
 <code-style lang="ruby" name="box" value="shadow" />
 <code-style lang="ruby" name="background-color" value="lightcyan1" />
 
-The change like this will affect to only Ruby.
+The change like this will affect only Ruby.
 
 ```kinx
 // This is a kinx block.

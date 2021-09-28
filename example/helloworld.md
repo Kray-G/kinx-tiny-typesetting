@@ -46,4 +46,21 @@ hello, world
 | `left-right` | \\arrow{left-right} |              |                     |
 |  `up-down`   |  \\arrow{up-down}   |              |                     |
 
+# Table
 
+<context label="Table:TableExample"/>
+<context caption="Example of Table"/>
+<context vline-left="single"/>
+<context vline-right="single"/>
+<context vline-inside="single"/>
+<context hline-header="double"/>
+<context hline-inside="single"/>
+<context cell-valign="middle"/>
+<context cell-2-1="This is very very very very very very very very very very very very long text."/>
+<context cell-0-2="l. This is very very very very very very very very very very very very long text."/>
+
+|         Left         |         Center         |  \<.  |          Right           |
+| :------------------- | :--------------------: | :---: | -----------------------: |
+| A1                   | Aligned to the center. |   -   | b. Aligned to the right. |
+| r.t. A2 - Cell (1,0) |          \<.           |  ^.   |                       ^. |
+| A3                   |           -            |  \<.  |                       ^. |
