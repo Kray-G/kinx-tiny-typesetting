@@ -1,6 +1,6 @@
 % Hello Code Highlight
 % Your name
-% October 7, 2020
+% September 26, 2021
 
 # Code Highlighting
 
@@ -133,8 +133,6 @@ int main() {
 </code-style>
 ```
 
-You can see the differences between code blocks.
-
 ## HTML
 
 ```html
@@ -142,5 +140,7 @@ You can see the differences between code blocks.
 <code-style lang="ruby" name="background-color" value="lightcyan1">
 </code-style>
 ```
+
+# Conclusion
 
 You can see the differences between code blocks.

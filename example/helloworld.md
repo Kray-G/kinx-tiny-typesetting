@@ -1,6 +1,6 @@
 % Hello Kinx Tiny Typesetting
 % Your name
-% October 7, 2020
+% September 26, 2021
 
 # Greeting
 hello, world
@@ -13,14 +13,14 @@ hello, world
 
 |   Code   |     Character     |   Code   |     Character     |   Code   |     Character     |   Code   |     Character     |
 | :------: | :---------------: | :------: | :---------------: | :------: | :---------------: | :------: | :---------------: |
-| `0x2600` | \\unicode{0x2600} | `0x2608` | \\unicode{0x2608} | `0x2660` | \\unicode{0x2660} | `0x2668` | \\unicode{0x2668} |
+| `0x2600` | \\unicode{0x2600} | `0x2608` |                   | `0x2660` | \\unicode{0x2660} | `0x2668` | \\unicode{0x2668} |
 | `0x2601` | \\unicode{0x2601} | `0x2609` | \\unicode{0x2609} | `0x2661` | \\unicode{0x2661} | `0x2669` | \\unicode{0x2669} |
-| `0x2602` | \\unicode{0x2602} | `0x260A` | \\unicode{0x260A} | `0x2662` | \\unicode{0x2662} | `0x266A` | \\unicode{0x266A} |
-| `0x2603` | \\unicode{0x2603} | `0x260B` | \\unicode{0x260B} | `0x2663` | \\unicode{0x2663} | `0x266B` | \\unicode{0x266B} |
-| `0x2604` | \\unicode{0x2604} | `0x260C` | \\unicode{0x260C} | `0x2664` | \\unicode{0x2664} | `0x266C` | \\unicode{0x266C} |
-| `0x2605` | \\unicode{0x2605} | `0x260D` | \\unicode{0x260D} | `0x2665` | \\unicode{0x2665} | `0x266D` | \\unicode{0x266D} |
+| `0x2602` | \\unicode{0x2602} | `0x260A` |                   | `0x2662` | \\unicode{0x2662} | `0x266A` | \\unicode{0x266A} |
+| `0x2603` | \\unicode{0x2603} | `0x260B` |                   | `0x2663` | \\unicode{0x2663} | `0x266B` | \\unicode{0x266B} |
+| `0x2604` |                   | `0x260C` |                   | `0x2664` | \\unicode{0x2664} | `0x266C` | \\unicode{0x266C} |
+| `0x2605` | \\unicode{0x2605} | `0x260D` |                   | `0x2665` | \\unicode{0x2665} | `0x266D` | \\unicode{0x266D} |
 | `0x2606` | \\unicode{0x2606} | `0x260E` | \\unicode{0x260E} | `0x2666` | \\unicode{0x2666} | `0x266E` | \\unicode{0x266E} |
-| `0x2607` | \\unicode{0x2607} | `0x260F` | \\unicode{0x260F} | `0x2667` | \\unicode{0x2667} | `0x266F` | \\unicode{0x266F} |
+| `0x2607` |                   | `0x260F` | \\unicode{0x260F} | `0x2667` | \\unicode{0x2667} | `0x266F` | \\unicode{0x266F} |
 
 |   Code   |     Character     |   Code   |     Character     |   Code   |     Character     |   Code   |     Character     |
 | :------: | :---------------: | :------: | :---------------: | :------: | :---------------: | :------: | :---------------: |
@@ -37,15 +37,18 @@ hello, world
 
 `\\arrow{direction}` is also avalilable.
 
-|  Direction   |      Character      |  Direction   |      Character      |
-| :----------: | :-----------------: | :----------: | :-----------------: |
-|    `left`    |    \\arrow{left}    |  `left-up`   |  \\arrow{left-up}   |
-|     `up`     |     \\arrow{up}     |  `right-up`  |  \\arrow{right-up}  |
-|   `right`    |   \\arrow{right}    | `right-down` | \\arrow{right-down} |
-|    `down`    |    \\arrow{down}    | `left-down`  | \\arrow{left-down}  |
-| `left-right` | \\arrow{left-right} |              |                     |
-|  `up-down`   |  \\arrow{up-down}   |              |                     |
-
+|  Direction   |      Character      |      Direction       |          Character          |
+| :----------: | :-----------------: | :------------------: | :-------------------------: |
+|    `left`    |    \\arrow{left}    |   `left-and-right`   |   \\arrow{left-and-right}   |
+|     `up`     |     \\arrow{up}     |   `right-and-left`   |   \\arrow{right-and-left}   |
+|   `right`    |   \\arrow{right}    |    `up-and-down`     |    \\arrow{up-and-down}     |
+|    `down`    |    \\arrow{down}    | `left-right-harpoon` | \\arrow{left-right-harpoon} |
+| `left-right` | \\arrow{left-right} | `right-left-harpoon` | \\arrow{right-left-harpoon} |
+|  `up-down`   |  \\arrow{up-down}   |       `left-x`       |       \\arrow{left-x}       |
+|  `left-up`   |  \\arrow{left-up}   |      `right-x`       |      \\arrow{right-x}       |
+|  `right-up`  |  \\arrow{right-up}  |    `left-right-x`    |    \\arrow{left-right-x}    |
+| `right-down` | \\arrow{right-down} |                      |                             |
+| `left-down`  | \\arrow{left-down}  |                      |                             |
 # Table
 
 <context label="Table:TableExample"/>
@@ -56,11 +59,11 @@ hello, world
 <context hline-header="double"/>
 <context hline-inside="single"/>
 <context cell-valign="middle"/>
-<context cell-2-1="This is very very very very very very very very very very very very long text."/>
-<context cell-0-2="l. This is very very very very very very very very very very very very long text."/>
+<context cell-2-1="This is very very very very very very very very very very very very very very very very very long text."/>
+<context cell-0-2="l. This is very very very very very very very very very very very very very very very very very very very very very very very long text aligned to the left."/>
 
-|         Left         |         Center         |  \<.  |          Right           |
-| :------------------- | :--------------------: | :---: | -----------------------: |
-| A1                   | Aligned to the center. |   -   | b. Aligned to the right. |
-| r.t. A2 - Cell (1,0) |          \<.           |  ^.   |                       ^. |
-| A3                   |           -            |  \<.  |                       ^. |
+|                 Left                 |          Center           |  \<.  |                    Right                     |
+| :----------------------------------- | :-----------------------: | :---: | -------------------------------------------: |
+| A1                                   | w. Aligned to the center. |   -   | b. Aligned to the right<br />and the bottom. |
+| r.t. A2 - Cell (1,0) with top right. |            \<.            |  ^.   |                                           ^. |
+| A3                                   |             -             |  \<.  |                                           ^. |
