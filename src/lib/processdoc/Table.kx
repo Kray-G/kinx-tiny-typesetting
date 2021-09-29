@@ -11,7 +11,8 @@ namespace Typesetting {
             var bottom_, align_, valign_, header_;
             var offsetY_ = 0;
             var limitWidthBase_ = 50;
-            var limitWidth_ = limitWidthBase_;
+            var limitWidthDefault_ = limitWidthBase_;
+            var limitWidth_ = [];
 
             private getPrevLine(body, s) {
                 for (var i = s - 1; 0 <= i; --i) {
@@ -38,7 +39,8 @@ namespace Typesetting {
                     var ln = lens[sorted[i+1].index];
                     if (0 < li && (li * 2) < ln) {
                         for (var j = i+1; j <= l; ++j) {
-                            lens[sorted[j].index] = lens[sorted[j].index] * 5 / 8;
+                            var e = sorted[j];
+                            lens[e.index] = lens[e.index] * 5 / 8;
                         }
                         return true;
                     }
@@ -47,11 +49,11 @@ namespace Typesetting {
             }
 
             private checkWidth(lens, widthlist, texts) {
-                var sorted = lens.map { => ({ index: _2, len: _1, width: widthlist[_2], text: texts[_2] }) }.sort { => _1.len <=> _2.len };
+                var sorted = lens.map { => ({ index: _2, len: _1, limit: limitWidth_[_2], width: widthlist[_2], text: texts[_2] }) }.sort { => _1.len <=> _2.len };
                 var l = sorted.length();
                 for (var i = 0; i < l; ++i) {
                     var e = sorted[i];
-                    if (0 < e.width.width && e.width.width < limitWidth_) {
+                    if (0 < e.width.width && e.width.width < (e.limit ?? limitWidthDefault_)) {
                         if (adjustWidth(lens, sorted)) {
                             return false;
                         }
@@ -78,6 +80,17 @@ namespace Typesetting {
                     }
                 }
                 return width;
+            }
+
+            private getLongestLen(b, isHeader) {
+                var len = 0;
+                b.split("\n\n").each {
+                    var l = measureText(_1, isHeader);
+                    if (len < l) {
+                        len = l;
+                    }
+                };
+                return len;
             }
 
             private setupTable(table) {
@@ -147,6 +160,9 @@ namespace Typesetting {
                             if (!colspan && rowspan && getPrevLine(body, i)[j].colspan) {
                                 colspan = true;
                             }
+                            if (colspan || rowspan) {
+                                b = "";
+                            }
                             var halign = null, valign = null, changed = true;
                             do {
                                 switch (b.subString(0, 2)) {
@@ -156,17 +172,25 @@ namespace Typesetting {
                                 when "t.": valign = "top";    b = b.subString(2).trimLeft();
                                 when "m.": valign = "middle"; b = b.subString(2).trimLeft();
                                 when "b.": valign = "bottom"; b = b.subString(2).trimLeft();
-                                else:
+                                when "w.":
+                                    if (limitWidth_[j].isUndefined) {
+                                        limitWidth_[j] = limitWidthDefault_;
+                                    }
+                                    b = b.subString(2).trimLeft();
+                                otherwise:
                                     changed = false;
                                 }
                             } while (changed);
-                            var w = rowspan ? lens[j] : measureText(b, ba.isHeader);
+                            var w = rowspan ? lens[j] : getLongestLen(b, ba.isHeader);
+                            if (limitWidth_[j].isDefined && limitWidth_[j] < w) {
+                                limitWidth_[j] = w;
+                            }
                             if (table.limitColumn.isDefined && j == table.limitColumn) {
-                                if (limitWidth_ < w) {
-                                    limitWidth_ = w;
+                                if (limitWidthDefault_ < w) {
+                                    limitWidthDefault_ = w;
                                 }
                             }
-                            ba[j] = { text: (colspan || rowspan) ? "" : b, width: w, colspan, rowspan, valign, halign };
+                            ba[j] = { text: b, width: w, colspan, rowspan, valign, halign };
                             if (!colspan && !nextcolspan && lens[j] < w) {
                                 lens[j] = w;
                                 texts[j] = {
@@ -178,12 +202,12 @@ namespace Typesetting {
                     }
                 }
                 for (var i = 0, l = lens.length(); i < l; ++i) {
-                    if (lens[i] < limitWidth_) {
-                        lens[i] = limitWidth_;
+                    if (lens[i] < limitWidthDefault_) {
+                        lens[i] = limitWidthDefault_;
                     }
                 }
                 var widthlist;
-                do {
+                for (var i = 0; i < 10; ++i) {
                     var total = 0;
                     for (var i = 0, l = lens.length(); i < l; ++i) {
                         total += lens[i];
@@ -200,7 +224,10 @@ namespace Typesetting {
                             areaWidth: w - info_.base.table.cellPadding * 2,
                         };
                     };
-                } while (!checkWidth(lens, widthlist, texts));
+                    if (checkWidth(lens, widthlist, texts)) {
+                        break;
+                    }
+                }
 
                 return widthlist;
             }
@@ -368,7 +395,7 @@ namespace Typesetting {
                 }
             }
 
-            private outputText(writer, table, array, nextLine) {
+            private outputText(writer, table, array) {
                 var xbase = left_;
                 var ybase = array.y + offsetY_;
                 var totalLineFeedWidth = array.totalLineFeedWidth;
@@ -458,7 +485,7 @@ namespace Typesetting {
                 savedPos_ = writer.getPos();
                 savedMargin_ = writer.getMargin();
                 margin_ = writer.makeMarginSize({ cache: false });
-                limitWidth_ = table.limitWidth ?? limitWidthBase_;
+                limitWidthDefault_ = table.limitWidth ?? limitWidthBase_;
 
                 var fontSize = context_.font.fontSize;
                 var paragraphSkipWidth = context_.page.paragraphSkipWidth;
