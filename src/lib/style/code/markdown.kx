@@ -39,12 +39,28 @@ namespace Style {
             {
                 name: "tag-single-line",
                 pattern: /<([-_a-zA-Z][-_a-zA-Z0-9]*)\s+(.+)\s*\/>/,
-                color: [ "grey50", "blue", "cyan1" ],
+                color: [
+                    "grey50",
+                    "blue",
+                    {
+                        name: "attributes",
+                        pattern: /(\S+)\s*=\s*("[^"]+")/,
+                        color: [ "grey50", "cyan1", "orange3" ],
+                    },
+                ],
             },
             {
                 name: "tag-multi-line",
                 pattern: /<([-_a-zA-Z][-_a-zA-Z0-9]*)\s+(.+)\s*>/,
-                color: [ "grey50", "blue", "cyan1" ],
+                color: [
+                    "grey50",
+                    "blue",
+                    {
+                        name: "attributes",
+                        pattern: /(\S+)\s*=\s*("[^"]+")/,
+                        color: [ "grey50", "cyan1", "orange3" ],
+                    },
+                ],
             },
             {
                 name: "tag-multi-line",

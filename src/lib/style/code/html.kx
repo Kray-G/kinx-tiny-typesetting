@@ -25,7 +25,7 @@ namespace Style {
             },
             {
                 name: "attributes",
-                pattern: /(\S+)\s*=\s*([^> \r\t\n]+)/,
+                pattern: /(\S+)\s*=\s*("[^"]+")/,
                 color: [ "grey50", "cyan1", "orange3" ],
             },
             {

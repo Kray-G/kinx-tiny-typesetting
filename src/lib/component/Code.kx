@@ -25,6 +25,42 @@ namespace Typesetting {
                 opts_.lang = lang;
                 opts_.syntax = Typesetting.Style.Code[lang || '-'];
             }
+            private analyzeColor(words, text, { name, pattern, color }, start, end) {
+                var pos = 0;
+                pattern.reset(text);
+                while (pattern.find()) {
+                    var b, e, g = pattern.group;
+                    for (var i = 1, l = g.length(); i < l; ++i) {
+                        var gi = g[i];
+                        b = g[i].begin;
+                        e = g[i].end;
+                        if (pos < b) {
+                            words.push({
+                                name: "none",
+                                word: text.subString(pos, b - pos),
+                                color: color[0],
+                                pos: { start: start+pos, end: start+b },
+                            });
+                        }
+                        words.push({
+                            name: name,
+                            word: text.subString(b, e - b),
+                            color: color[i],
+                            pos: { start: start+b, end: start+e },
+                        });
+                        pos = e;
+                    }
+                }
+                var e = end - start;
+                if (pos < e) {
+                    words.push({
+                        name: "none",
+                        word: text.subString(pos, e - pos),
+                        color: color[0],
+                        pos: { start: start+pos, end: start+e },
+                    });
+                }
+            }
             private writeLineWithColor(line, fontObj, fontSize, info, context, core, writer, lineFeedWidth) {
                 var startPos = 0;
                 var words = [];
@@ -95,13 +131,17 @@ namespace Typesetting {
                                             bold: pi.bold,
                                         });
                                     }
-                                    words.push({
-                                        name: pi.name,
-                                        word: line.subString(pss, pse - pss),
-                                        color: color[j],
-                                        pos: { start: pss, end: pse },
-                                        bold: pi.bold,
-                                    });
+                                    if (color[j].isObject) {
+                                        analyzeColor(words, line.subString(pss, pse - pss), color[j], pss, pse);
+                                    } else {
+                                        words.push({
+                                            name: pi.name,
+                                            word: line.subString(pss, pse - pss),
+                                            color: color[j],
+                                            pos: { start: pss, end: pse },
+                                            bold: pi.bold,
+                                        });
+                                    }
                                     s = pse;
                                 }
                                 if (s < found.end) {
