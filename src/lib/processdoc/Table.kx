@@ -371,8 +371,8 @@ namespace Typesetting {
                         if (!h.rowspan && !h.cowspan) {
                             writer.drawBox(
                                 x + lineWidthBase,
-                                ybase + totalLineFeedWidth - topadjust,
-                                h.width - lineWidthBase * h.colSpanCount,
+                                ybase + totalLineFeedWidth - topadjust + lineWidthBase/4,
+                                h.width - lineWidthBase * (h.colSpanCount + 1),
                                 height - topadjust + botadjust,
                                 0, bgColor, bgColor
                             );
