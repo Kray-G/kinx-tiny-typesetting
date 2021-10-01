@@ -788,27 +788,86 @@ Markdown テーブル表記で表現できなかったパラメータは、`<con
 テーブルごとに設定します。
 
 ただし、`label`、`caption` 以外はデフォルト値を変更できます。
-その場合、項目名に `-default` を指定して設定してください。
-例えば、`vline-left-default` とします。
+その場合、項目名の末尾に `-default` を指定して設定してください。
+例えば、`vline-left-default` とすると、`vline-left` のデフォルト値を変更することができます。
 
 <context label="Table:TableOptions"/>
 <context caption="テーブル・オプション"/>
 <context limit-column="0"/>
 
-|   オプション   |             値              |                                                 意味                                                 |
-| -------------- | --------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `label`        | 相互参照ラベル              | 相互参照で指定するラベルを設定する。                                                                 |
-| `caption`      | キャプション                | 表のキャプション。                                                                                   |
-| `vline-left`   | `single`, `double`, `false` | 表の左側に縦罫線を出力するかの指定をする（デフォルト `false`）。                                     |
-| `vline-right`  | 同上                        | 表の右側に縦罫線を出力するかの指定をする（デフォルト `false`）。                                     |
-| `vline-inside` | 同上                        | 表中に縦罫線を出力するかの指定をする（デフォルト `false`）。                                         |
-| `hline-top`    | 同上                        | 表の上側に横罫線を出力するかの指定をする（デフォルト `single`）。                                    |
-| `hline-bottom` | 同上                        | 表の下側に横罫線を出力するかの指定をする（デフォルト `single`）。                                    |
-| `hline-header` | 同上                        | 表のヘッダ行の下側に横罫線を出力するかの指定をする（デフォルト `single`）。                          |
-| `hline-inside` | 同上                        | 表中に横罫線を出力するかの指定をする（デフォルト `false`）。                                         |
-| `cell-i-j`     | テキスト                    | セル内容を別定義する。`i`、`j` はセル位置で、`i` が行、`j` が列を示す。それぞれ 0 始まりで指定する。 |
-| `limit-column` | 整数                        | セルサイズの最小幅を指定された列が折り返さない幅とする。                                             |
-| `limit-width`  | 実数                        | セルサイズの最小幅を指定された値とする。                                                             |
+|       オプション        |             値              |                    意味（デフォルト値）                    |
+| ----------------------- | --------------------------- | ---------------------------------------------------------- |
+| `label`                 | 相互参照ラベル              | 相互参照で指定するラベルを設定。                           |
+| `caption`               | キャプション                | 表のキャプション。                                         |
+| `vline-left`            | `single`, `double`, `false` | 表左側の縦罫線の指定（`false`）。                          |
+| `vline-right`           | 同上                        | 表右側の縦罫線の指定（`false`）。                          |
+| `vline-inside`          | 同上                        | 表中の縦罫線の指定（`false`）。                            |
+| `hline-top`             | 同上                        | 表上側の横罫線の指定（`single`）。                         |
+| `hline-bottom`          | 同上                        | 表下側の横罫線の指定（`single`）。                         |
+| `hline-header`          | 同上                        | ヘッダ下の横罫線の指定（`single`）。                       |
+| `hline-inside`          | 同上                        | 表中の横罫線の指定（`false`）。                            |
+| `cell-valign`           | `top`, `middle`, `bottom`   | セル内での縦方向での配置位置（`top`）。                    |
+| `cell-`$row$`-`$col$    | テキスト                    | $(row,col)$ のセル内容の別定義。それぞれ 0 始まり。        |
+| `limit-column`          | 整数                        | セルサイズの最小幅を決めるカラムの指定。（折り返さない幅） |
+| `limit-width`           | 実数                        | セルサイズの最小幅の指定。                                 |
+| `background-color`      | 色名                        | テーブル全体の背景色。                                     |
+| `bgcolor-`$row$`-`$col$ | 色名                        | $(row,col)$ のセルの背景色。それぞれ 0 始まり。            |
+
+使用できる色の名称は「\\nameref{色一覧}」を参照してください。
+
+<pagebreak />
+
+#### セル・コマンド
+
+セルの中でセル内での配置位置を制御するためのコマンドを記載することもでき、
+セルの結合やセルごとのテキスト配置ができるようになります。
+以下のドットで完了するコマンドをセル内のテキストの先頭に記載するとコマンドと認識されます。
+コマンドは複数連続して記載できます。
+例えば、`r.t.` はセルの右上にテキストを配置することを示します。
+
+<context label="Table:TableCellCommand"/>
+<context caption="テーブル・セル・コマンド"/>
+<context limit-column="0"/>
+
+| コマンド |                               意味                               |
+| :------: | ---------------------------------------------------------------- |
+|  `\<.`   | 左のセルと結合させる。HTML 要素と混同しないよう `\` が必要。     |
+|   `^.`   | 上のセルと結合させる。                                           |
+|   `l.`   | 該当のセルのみテキストを左寄せにする。                           |
+|   `c.`   | 該当のセルのみテキストを左右中央に配置にする。                   |
+|   `r.`   | 該当のセルのみテキストを右寄せにする。                           |
+|   `t.`   | 該当のセルのみテキストを上寄せにする。                           |
+|   `m.`   | 該当のセルのみテキストを上下中央に配置にする。                   |
+|   `b.`   | 該当のセルのみテキストを下寄せにする。                           |
+|   `w.`   | 該当のセルの幅を可能な限りその列で最低限必要な幅として取り扱う。 |
+
+以下にセル結合や背景色を指定したサンプルを示します。
+
+\\def[cell-0-2]{This is very very very very very very very very very very very very very
+very very very very very very very very very very long text aligned to the left.}
+\\def[cell-0-3]{Aligned to the right and the bottom.}
+\\def[cell-2-1]{This is \\color[red]{very very very very very very very very very very
+very very very very very very very very very very very very very very very very} long text.}
+
+<context label="Table:ComplexTableExample"/>
+<context caption="複雑なテーブルの例"/>
+<context vline-left="single"/>
+<context vline-right="single"/>
+<context vline-inside="single"/>
+<context hline-header="double"/>
+<context hline-inside="single"/>
+<context bgcolor-2-1="yellow"/>
+<context cell-valign="middle"/>
+<context cell-1-0="r.t. A2 - at top right."/>
+
+| Left |          Center           |        \<.         |       Right        |
+| :--- | :-----------------------: | :----------------: | -----------------: |
+| A1   | w. Aligned to the center. | l. \\use{cell-0-2} | b. \\use{cell-0-3} |
+| -    |            \<.            |         ^.         |                 ^. |
+| A3   |      \\use{cell-2-1}      |        \<.         |                 ^. |
+| Left |          Center           |       Center       |              Right |
+
+<pagebreak />
 
 ### フォント
 
@@ -1544,6 +1603,7 @@ Markdown 記法の中に、HTML で記載するコマンドがいくつか存在
 | `\lower[params]{}` | Y 軸のオフセットを変更し、下に移動させる。`height` ... 位置オフセットを指定する。                                                        |
 | `\sans{}`          | ゴシック体（Sans Serif 体）を使用するように変更する。                                                                                    |
 | `\url[params]{}`   | リンクテキストを生成する。`param` に URL を記載する。`[Text](URL)` と同様。                                                              |
+| `\def[key]{}`      | パラグラフを保存する。何も出力しない。保存した文章は `\use` で参照して使用する。                                                         |
 
 ここでの例では単純に `{}` とだけ記載されていますが、全てのコマンドで `{}` 内にパラグラフを記述できます。
 例えば、`\\sans{「これはサンセリフ・フォントです。」}` と記載すると、
@@ -1561,25 +1621,26 @@ Markdown 記法の中に、HTML で記載するコマンドがいくつか存在
 <context caption="単独処理コマンド"/>
 <context limit-column="0"/>
 
-|          コマンド          |                                                                             内容                                                                             |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `\TeX`                     | \\TeX のロゴを出力する。                                                                                                                                     |
-| `\LaTeX`                   | \\LaTeX のロゴを出力する。                                                                                                                                   |
-| `\KaTeX`                   | \\KaTeX のロゴを出力する。                                                                                                                                   |
-| `\noindent`                | インデント処理を打ち消す。インデントしないパラグラフを生成する。                                                                                             |
-| `\apos`                    | アポストロフィーを出力する。                                                                                                                                 |
-| `\copyright`               | コピーライト（\\copyright）を出力する。                                                                                                                      |
-| `\hs`                      | 区切りスペース（小文字 i の幅）サイズの空白を出力する。                                                                                                      |
-| `\hspace{width}`           | `width` で指定された幅（単位指定可）分 X 座標を変更する（プラスの値で右方向）。                                                                              |
-| `\vspace{height}`          | `height` で指定された高さ（単位指定可）分 Y 座標を変更する（プラスの値で下方向）。                                                                           |
-| `\ref{label}`              | `label` で指定された番号に対するクロス・リファレンスを生成する。                                                                                             |
-| `\pageref{label}`          | `label` で指定されたページに対するクロス・リファレンスを生成する。                                                                                           |
-| `\textref{label}`          | `label` で指定されたテキストに対するクロス・リファレンスを生成する。                                                                                         |
-| `\nameref{label}`          | `label` で指定された「番号＋テキスト」に対するクロス・リファレンスを生成する。                                                                               |
-| `\pack{text}`              | `text` の内容を改行させずひとまとまりとして認識させる。                                                                                                      |
-| `\ruby[Ruby]{Parent-Text}` | `Parent-Text` の上部にルビ（`Ruby`）を表記する。（左記表記での例：\\ruby\[Ruby\]{Parent-Text}）                                                              |
-| `\arrow{direction}`        | 矢印を出力する。`direction` には `left`、`right`、`up`、`down`、`left-right`、`up-down`、`left-up`、`right-up`、`right-down`、`left-down` のいずれかを指定。 |
-| `\unicode{code}`           | `code` で示したユニコード文字を出力する。                                                                                                                    |
+|          コマンド          |                                                                          内容                                                                          |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `\TeX`                     | \\TeX のロゴを出力する。                                                                                                                               |
+| `\LaTeX`                   | \\LaTeX のロゴを出力する。                                                                                                                             |
+| `\KaTeX`                   | \\KaTeX のロゴを出力する。                                                                                                                             |
+| `\noindent`                | インデント処理を打ち消す。インデントしないパラグラフを生成する。                                                                                       |
+| `\apos`                    | アポストロフィーを出力する。                                                                                                                           |
+| `\copyright`               | コピーライト（\\copyright）を出力する。                                                                                                                |
+| `\hs`                      | 区切りスペース（小文字 i の幅）サイズの空白を出力する。                                                                                                |
+| `\hspace{width}`           | `width` で指定された幅（単位指定可）分 X 座標を変更する（プラスの値で右方向）。                                                                        |
+| `\vspace{height}`          | `height` で指定された高さ（単位指定可）分 Y 座標を変更する（プラスの値で下方向）。                                                                     |
+| `\ref{label}`              | `label` で指定された番号に対するクロス・リファレンスを生成する。                                                                                       |
+| `\pageref{label}`          | `label` で指定されたページに対するクロス・リファレンスを生成する。                                                                                     |
+| `\textref{label}`          | `label` で指定されたテキストに対するクロス・リファレンスを生成する。                                                                                   |
+| `\nameref{label}`          | `label` で指定された「番号＋テキスト」に対するクロス・リファレンスを生成する。                                                                         |
+| `\pack{text}`              | `text` の内容を改行させずひとまとまりとして認識させる。                                                                                                |
+| `\ruby[Ruby]{Parent-Text}` | `Parent-Text` の上部にルビ（`Ruby`）を表記する。（左記表記での例：\\ruby\[Ruby\]{Parent-Text}）                                                        |
+| `\arrow{direction}`        | 矢印を出力する。`direction` には `left`、`right`、`up`、`down`、`left-right`、`up-down`、`left-up`、`right-up`、`right-down`、`left-down` を指定可能。 |
+| `\unicode{code}`           | `code` で示したユニコード文字を出力する。                                                                                                              |
+| `\use{key}`                | `\def` で保存した文章を参照して挿入する。                                                                                                              |
 
 # 機能拡張方法
 

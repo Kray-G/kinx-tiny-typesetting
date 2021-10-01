@@ -49,21 +49,32 @@ hello, world
 |  `right-up`  |  \\arrow{right-up}  |    `left-right-x`    |    \\arrow{left-right-x}    |
 | `right-down` | \\arrow{right-down} |                      |                             |
 | `left-down`  | \\arrow{left-down}  |                      |                             |
+
 # Table
 
-<context label="Table:TableExample"/>
-<context caption="Example of Table"/>
+\\def[cell-0-2]{This is very very very very very very very very very very very very very
+very very very very very very very very very very long text aligned to the left.}
+\\def[cell-0-3]{\\noindent{}Aligned to the right<br />and the bottom.}
+\\def[cell-2-1]{This is \\color[green]{very very very very very very very very very very
+very very very very very very very very very very very very very very very very} long text.}
+
 <context vline-left="single"/>
 <context vline-right="single"/>
 <context vline-inside="single"/>
 <context hline-header="double"/>
 <context hline-inside="single"/>
+<context hline-bottom="single"/>
 <context cell-valign="middle"/>
-<context cell-2-1="This is very very very very very very very very very very very very very very very very very long text."/>
-<context cell-0-2="l. This is very very very very very very very very very very very very very very very very very very very very very very very long text aligned to the left."/>
+<context background-color="lightgreen"/>
+<context cell-1-0="r.t. A2 - at top right."/>
+<context bgcolor-0-2="yellow"/>
+<context bgcolor-1-0="lightyellow3"/>
+<context bgcolor-2-1="lightyellow3"/>
+<context bgcolor-3-3="black"/>
 
-|                 Left                 |          Center           |  \<.  |                    Right                     |
-| :----------------------------------- | :-----------------------: | :---: | -------------------------------------------: |
-| A1                                   | w. Aligned to the center. |   -   | b. Aligned to the right<br />and the bottom. |
-| r.t. A2 - Cell (1,0) with top right. |            \<.            |  ^.   |                                           ^. |
-| A3                                   |             -             |  \<.  |                                           ^. |
+| Left |          Center           |        \<.         |         Right         |
+| :--- | :-----------------------: | :----------------: | --------------------: |
+| A1   | w. Aligned to the center. | l. \\use{cell-0-2} |    b. \\use{cell-0-3} |
+| -    |            \<.            |         ^.         |                    ^. |
+| A3   |      \\use{cell-2-1}      |        \<.         |                    ^. |
+| Left |          Center           |       Center       | \\color[white]{Right} |

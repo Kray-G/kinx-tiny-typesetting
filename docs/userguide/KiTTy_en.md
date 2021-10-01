@@ -771,33 +771,87 @@ Here is the output result below.
 #### Table Options
 
 `<context />` tag can specify the parameters which can not be specified in a normal Markdown syntax.
-''\\nameref{Table:TableOptions}'' shows the list of the parameters which can be specified for the table.
-Those parameters are used as a temporary and they will be removed right after it being used.
-Therefore the parameters specified once can not used for multiple tables.
-You have to set it again if you want to use the same parameters for a next table.
+''\\nameref{Table:TableOptions}'' shows the list of the parameters.
+Those parameters are used as a temporary and it will be removed right after used.
+Therefore, you have to set it again if you want to use the same parameters for a next table.
 
-But you can change a default value for the parameters except `label` and `caption`.
-For that, change the value for the name with `-default` at the end of the parameter name.
-For example, you can change the default value of `vline-left` by changing the value for `vline-left-default`.
+Moreover, you can change a default value using the name with `-default` at the end.
+For example, by `vline-left-default` it will change the default value of `vline-left`.
 
 <context label="Table:TableOptions"/>
 <context caption="Table Options"/>
 <context limit-column="0"/>
 
-|      Name      |            Value            |                                                 Meaning                                                 |
-| -------------- | --------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `label`        | Text                        | The label for Cross-Reference.                                                                          |
-| `caption`      | Text                        | The caption of a table.                                                                                 |
-| `vline-left`   | `single`, `double`, `false` | Vertical line type of the left on a table (`false` by default).                                         |
-| `vline-right`  | Same as above               | Vertical line type of the right on a table (`false` by default).                                        |
-| `vline-inside` | Same as above               | Vertical line type inside a table (`false` by default).                                                 |
-| `hline-top`    | Same as above               | Horizontal line type of the top on a table (`single` by default).                                       |
-| `hline-bottom` | Same as above               | Horizontal line type of the bottom on a table (`single` by default).                                    |
-| `hline-header` | Same as above               | Horizontal line type under a header (`single` by default).                                              |
-| `hline-inside` | Same as above               | Horizontal line type inside a table (`false` by default).                                               |
-| `cell-i-j`     | Text                        | The text in the cell of $(i,j)$. $i$ is a row number and $j$ is a column number, and both are 0 origin. |
-| `limit-column` | Integer number              | The column number for the minimum width to determine a cell width limitation.                           |
-| `limit-width`  | Real number                 | The minimum width of a cell width.                                                                      |
+|          Name           |            Value            |                      Meaning (by default)                      |
+| ----------------------- | --------------------------- | -------------------------------------------------------------- |
+| `label`                 | Text                        | The label for Cross-Reference.                                 |
+| `caption`               | Text                        | The caption of a table.                                        |
+| `vline-left`            | `single`, `double`, `false` | Vertical line type of the left on a table. (`false`)           |
+| `vline-right`           | `single`, `double`, `false` | Vertical line type of the right on a table. (`false`)          |
+| `vline-inside`          | `single`, `double`, `false` | Vertical line type inside a table. (`false`)                   |
+| `hline-top`             | `single`, `double`, `false` | Horizontal line type of the top on a table. (`single`)         |
+| `hline-bottom`          | `single`, `double`, `false` | Horizontal line type of the bottom on a table. (`single`)      |
+| `hline-header`          | `single`, `double`, `false` | Horizontal line type under a header. (`single`)                |
+| `hline-inside`          | `single`, `double`, `false` | Horizontal line type inside a table. (`false`)                 |
+| `cell-valign`           | `top`, `middle`, `bottom`   | Vertical position in cell. (`top`)                             |
+| `cell-`$row$`-`$col$    | Text                        | The text in the cell of $(row,col)$, and 0 origin.             |
+| `limit-column`          | Integer number              | The column to determine a minimum cell width.                  |
+| `limit-width`           | Real number                 | The minimum width of a cell width.                             |
+| `background-color`      | Color name                  | The background color for a whole table.                        |
+| `bgcolor-`$row$`-`$col$ | Color name                  | The background color of the cell of $(row,col)$, and 0 origin. |
+
+See \\nameref{Color Examples} for supported color names.
+
+#### Table Cell Command
+
+You can write the command which controls cell attributes inside a cell to combine cells and to control the alignment in the cell.
+The following commands which is ended with the dot will be available when you write it at the head of the cell text.
+Multiple commands can be written sequencially.
+For example, `r.t.` means the text alignment is at the top right corner in the cell.
+
+<context label="Table:TableCellCommand"/>
+<context caption="Table Cell Command"/>
+<context limit-column="0"/>
+
+| Command |                                                Meaning                                                 |
+| :-----: | ------------------------------------------------------------------------------------------------------ |
+|  `\<.`  | Combine cells with the left cell. `\` is needed because of avoiding the confustion with HTML elements. |
+|  `^.`   | Combine cells with the upper cell.                                                                     |
+|  `l.`   | Align the text to the left in the cell.                                                                |
+|  `c.`   | Align the text to the center horizontally in the cell.                                                 |
+|  `r.`   | Align the text to the right in the cell.                                                               |
+|  `t.`   | Align the text to the top in the cell.                                                                 |
+|  `m.`   | Align the text to the middle vertically in the cell.                                                   |
+|  `b.`   | Align the text to the bottom in the cell.                                                              |
+|  `w.`   | Adjust the cell width to the necessary size as wide as possible.                                       |
+
+The following is the example with the combined cell and the background color.
+
+\\def[cell-0-2]{This is very very very very very very very very very very very very very
+very very very very very very very very very very long text aligned to the left.}
+\\def[cell-0-3]{Aligned to the right and the bottom.}
+\\def[cell-2-1]{This is \\color[red]{very very very very very very very very very very
+very very very very very very very very very very very very very very very very} long text.}
+
+<context label="Table:ComplexTableExample"/>
+<context caption="Example of Complex Table"/>
+<context vline-left="single"/>
+<context vline-right="single"/>
+<context vline-inside="single"/>
+<context hline-header="double"/>
+<context hline-inside="single"/>
+<context bgcolor-2-1="yellow"/>
+<context cell-valign="middle"/>
+<context cell-1-0="r.t. A2 - at top right."/>
+
+| Left |          Center           |        \<.         |       Right        |
+| :--- | :-----------------------: | :----------------: | -----------------: |
+| A1   | w. Aligned to the center. | l. \\use{cell-0-2} | b. \\use{cell-0-3} |
+| -    |            \<.            |         ^.         |                 ^. |
+| A3   |      \\use{cell-2-1}      |        \<.         |                 ^. |
+| Left |          Center           |       Center       |              Right |
+
+<pagebreak />
 
 ### Font
 
