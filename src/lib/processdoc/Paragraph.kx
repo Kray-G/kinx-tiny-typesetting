@@ -147,6 +147,9 @@ namespace Typesetting {
                     areaWidth = [areaWidth];
                 }
                 var words = wordSet.flatten();
+                if (words.length() == 0 || (words.length() == 1 && words[0].value.isUndefined)) {
+                    return [];
+                }
                 var nodes = [];
                 if (!context_.noIndent && !context_.notParagraph && !opts.noIndent) {
                     nodes.push(Linebreak.Box(context_.indentSize, new Word(info_).setWord(fontObj, fontSize, '')));
@@ -199,17 +202,18 @@ namespace Typesetting {
                     # nodes.each { => _1.display() };
                     # System.println("---");
                     var currentWidth, ci = 0;
-                    var spaceWidth = info_.measure.spaceWidth(fontObj, fontSize);
                     var nl = nodes.length();
                     var ns = [];
                     var x = 0.0, i;
                     for (i = 0; i < nl; ++i) {
                         currentWidth = ci < areaWidthLen ? areaWidth[ci] : areaWidth[-1];
                         var n = nodes[i];
+                        var breakpoint = n.isPenalty && n.penalty == -Linebreak.Infinity;
                         x += n.width;
-                        if (x < currentWidth) {
+                        if (x < currentWidth && !breakpoint) {
                             ns.push(n);
                         } else {
+                            ns.push(n) if (breakpoint);
                             lines.push({
                                 ratio: 0,
                                 nodes: ns,
@@ -218,7 +222,7 @@ namespace Typesetting {
                                 lineFeedWidth: 0,
                             });
                             ns = [];
-                            ns.push(n);
+                            ns.push(n) if (!breakpoint);
                             x = n.width;
                             ++ci;
                         }
@@ -279,6 +283,9 @@ namespace Typesetting {
                 text_ = text;
                 var noIndent = context_.noIndent;
                 var wordSet = info_.paragraphParser.parse(text);
+                if (wordSet.isAllGlue()) {
+                    return [];
+                }
                 if (context_.footnotes.length() > 0) {
                     var margin = info_.writer.getMargin();
                     margin.left = margin.left + info_.base.footnote.left;

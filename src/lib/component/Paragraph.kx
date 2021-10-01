@@ -36,20 +36,22 @@ namespace Typesetting {
                 prevBq_ = bqLevel;
 
                 var lines = core.paragraph.exec(opts_, text_);
-                var lineFeedWidth = 0;
-                var ll = lines.length();
-                var op = info.base.orphanPenalty + 1;
-                for (var i = 0, l = (op < ll ? op : ll); i < l; ++i) {
-                    lineFeedWidth += lines[i].lineFeedWidth;
+                if (lines.length() > 0) {
+                    var lineFeedWidth = 0;
+                    var ll = lines.length();
+                    var op = info.base.orphanPenalty + 1;
+                    for (var i = 0, l = (op < ll ? op : ll); i < l; ++i) {
+                        lineFeedWidth += lines[i].lineFeedWidth;
+                    }
+                    core.pendingParagraphList.push({
+                        isParagraph: true,
+                        lineFeedWidth: lineFeedWidth,
+                        func: &() => {
+                            core.util.write(lines, align, opts_);
+                        },
+                    });
+                    core.flushParagraph();
                 }
-                core.pendingParagraphList.push({
-                    isParagraph: true,
-                    lineFeedWidth: lineFeedWidth,
-                    func: &() => {
-                        core.util.write(lines, align, opts_);
-                    },
-                });
-                core.flushParagraph();
 
                 context.notParagraph = false;
                 context.font.color = savedColor;

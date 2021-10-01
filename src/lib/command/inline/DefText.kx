@@ -1,0 +1,13 @@
+namespace Typesetting {
+
+    namespace Command {
+
+        class Deftext(info_, context_) {
+            public exec(params, value) {
+                context_.deftext[params] = value;
+            }
+        }
+
+    } # namespace ParagraphCommand
+
+} # namespace Typesetting

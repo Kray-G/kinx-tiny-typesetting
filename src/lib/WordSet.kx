@@ -21,6 +21,9 @@ namespace Typesetting {
         }
         public additionalSpace(_width) {
         }
+        public isAllGlue() {
+            return true;
+        }
         public toString() {
             return "{NullWord}";
         }
@@ -37,6 +40,9 @@ namespace Typesetting {
             @spaceText = spaceText;
             @space = Typesetting.Util.getPt(info_.context, spaceText);
             return this;
+        }
+        public isAllGlue() {
+            return false;
         }
         public toString() {
             return "{Vspace:%{[@spaceText,@space]}}";
@@ -83,6 +89,9 @@ namespace Typesetting {
         }
         public additionalSpace(width) {
             @addSpace = width;
+        }
+        public isAllGlue() {
+            return false;
         }
         public toString() {
             return "{Image}";
@@ -151,6 +160,9 @@ namespace Typesetting {
         }
         public additionalSpace(width) {
             @addSpace = width;
+        }
+        public isAllGlue() {
+            return false;
         }
         public toString() {
             return "{Image}";
@@ -228,6 +240,9 @@ namespace Typesetting {
         public additionalSpace(width) {
             @addSpace = width;
         }
+        public isAllGlue() {
+            return false;
+        }
         public toString() {
             return "{'%{@word}',%{@font.getFontName()},%{[@size,@width]}, offset:[%{@offsetX},%{@offsetY}]}";
         }
@@ -290,12 +305,20 @@ namespace Typesetting {
         public toString() {
             return @words.map { => _1.toString() }.toString();
         }
+        public isAllGlue() {
+            for (var i = 0, l = @words.length(); i < l; ++i) {
+                if (@words[i].isAllGlue.isFunction && !@words[i].isAllGlue()) {
+                    return false;
+                }
+            }
+            return true;
+        }
         public display(indent) {
             indent ??= 0;
             if (indent) {
                 System.print("    " * indent);
             }
-            System.println("WordSet");
+            System.println("WordSet %s" % (new Boolean(isAllGlue()).toString()));
             @words.each { &(word)
                 word.display(indent + 1);
             };

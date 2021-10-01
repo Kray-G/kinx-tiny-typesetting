@@ -1,14 +1,17 @@
 namespace Typesetting {
 
     const TOO_BIG_SPACE = 6553600.0;
+    var Linebreak = Typesetting.Linebreak;
 
     namespace ProcessDoc {
+
+        const lineWidthBase = 0.4;
 
         class Table(info_, context_, util_, paragraph_) {
 
             var pos_, margin_, width_, top_, left_;
             var savedPos_, savedMargin_;
-            var bottom_, align_, valign_, header_;
+            var bottom_, align_, valign_, bgColor_, header_;
             var offsetY_ = 0;
             var limitWidthBase_ = 50;
             var limitWidthDefault_ = limitWidthBase_;
@@ -68,23 +71,29 @@ namespace Typesetting {
                     return 0.0;
                 }
                 var lines = paragraph_.exec({ measureWidth: true }, isHeader ? "\\bold{%{text}}" : text);
+                var candidate = 0.0;
                 var width = 0.0;
                 var nodes = lines[0].nodes;
                 var len = nodes.length();
                 for (var i = 0; i < len; ++i) {
                     var n = nodes[i];
-                    if (n.isBox) {
+                    if (n.isPenalty && n.penalty == -Linebreak.Infinity) {
+                        if (candidate < width) {
+                            candidate = width;
+                        }
+                        width = 0.0;
+                    } else if (n.isBox) {
                         width += n.width;
                     } else if (n.isGlue && n.width < 20.0) {
                         width += n.width;
                     }
                 }
-                return width;
+                return candidate < width ? width : candidate;
             }
 
             private getLongestLen(b, isHeader) {
                 var len = 0;
-                b.split("\n\n").each {
+                b.split(/\n\n|<br\s*\/>/).each {
                     var l = measureText(_1, isHeader);
                     if (len < l) {
                         len = l;
@@ -105,6 +114,7 @@ namespace Typesetting {
                 }
 
                 valign_ = table.cellVAlign || "top";
+                bgColor_ = table.bgColor;
                 var alignPos = 0;
                 var align = table.cellAlign;
                 var lastLines = align.match(/\|+$/)[0];
@@ -190,7 +200,7 @@ namespace Typesetting {
                                     limitWidthDefault_ = w;
                                 }
                             }
-                            ba[j] = { text: b, width: w, colspan, rowspan, valign, halign };
+                            ba[j] = { text: b, width: w, colspan, rowspan, valign, halign, attrs: table.attrs[i][j] };
                             if (!colspan && !nextcolspan && lens[j] < w) {
                                 lens[j] = w;
                                 texts[j] = {
@@ -252,12 +262,15 @@ namespace Typesetting {
                         var additional = (isNextline ? cellPadding2 : cellPadding);
                         ba[0].areaWidth = widthlist[0].areaWidth;
                         ba[0].width = widthlist[0].width;
+                        ba[0].colSpanCount = 1;
                         var prev = ba[0];
                         for (var j = 1, m = ba.length(); j < m; ++j) {
                             var b = ba[j];
+                            b.colSpanCount = 1;
                             if (b.colspan) {
                                 prev.areaWidth += widthlist[j].areaWidth + info_.base.table.cellPadding * 2;
                                 prev.width += widthlist[j].width;
+                                prev.colSpanCount++;
                                 b.areaWidth = 0;
                                 b.width = 0;
                             } else {
@@ -268,7 +281,6 @@ namespace Typesetting {
                         }
                         for (var j = 0, m = ba.length(); j < m; ++j) {
                             var b = ba[j];
-                            b.width = widthlist[j].width;
                             var noIndent = context_.noIndent;
                             context_.noIndent = true;
                             b.lines = paragraph_.exec({ areaWidth: b.areaWidth }, isHeader ? "\\bold{%{b.text}}" : b.text);
@@ -336,23 +348,44 @@ namespace Typesetting {
                 y ??= array.y + offsetY_;
                 for (var i = 0, l = array.length() - 1; i <= l; ++i) {
                     var h = array[i];
+                    var bgColor = h.attrs.bgColor ?? bgColor_;
                     var noHLine = nextLine.isArray ? nextLine[i].rowspan : false;
-                    if (!noHLine) {
-                        drawHLine(writer, offset, count, xbase, y, h.width, 0, 0.4);
+                    if (!noHLine || bgColor) {
+                        drawHLine(writer, offset, count, xbase, y, h.width, 0, lineWidthBase, noHLine ? bgColor : null);
                     }
                     xbase += h.width;
                 }
             }
 
-            private outputTextImpl(array, writer, xbase, ybase, totalLineFeedWidth) {
+            private outputTextImpl(array, writer, xbase, ybase, totalLineFeedWidth, prevLineCount, nextLineCount) {
                 var cellPadding = info_.base.table.cellPadding;
-                for (var i = 0, l = array.length(); i < l; ++i) {
+                var x = xbase;
+                var l = array.length();
+                var topadjust = (lineWidthBase*2) + (prevLineCount == 2 ? 1 : 0);
+                var botadjust = (nextLineCount == 2 ? (lineWidthBase + 2) : 0);
+                for (var i = 0; i < l; ++i) {
+                    var h = array[i];
+                    var bgColor = h.attrs.bgColor ?? bgColor_;
+                    if (bgColor && h.width > 0) {
+                        var height = h.spanHeight < totalLineFeedWidth ? totalLineFeedWidth : h.spanHeight;
+                        if (!h.rowspan && !h.cowspan) {
+                            writer.drawBox(
+                                x + lineWidthBase,
+                                ybase + totalLineFeedWidth - topadjust,
+                                h.width - lineWidthBase * h.colSpanCount,
+                                height - topadjust + botadjust,
+                                0, bgColor, bgColor
+                            );
+                        }
+                    }
+                    x += h.width;
+                }
+                for (var i = 0; i < l; ++i) {
                     var h = array[i];
                     var halign = h.halign ?? (align_[i].align == 'c'[0] ? "center" : (align_[i].align == 'r'[0] ? "right" : "left"));
                     var isCenter = halign == "center";
                     var isRight  = halign == "right";
-                    x += cellPadding;
-                    y = h.y + offsetY_;
+                    var y = h.y + offsetY_;
                     var valign = h.valign ?? valign_;
                     if (valign == "middle") {
                         if (h.totalLineFeedWidth < totalLineFeedWidth) {
@@ -368,34 +401,35 @@ namespace Typesetting {
                         }
                     }
                     h.lines.each { &(line)
-                        x = xbase + cellPadding;
+                        var x = xbase + cellPadding;
                         var offsetX = 0;
                         if (line.totalWidth != line.width) {
                             if (isCenter) {
-                                offsetX = (h.areaWidth - line.totalWidth) / 2;
+                                x += (h.areaWidth - line.totalWidth) / 2;
                             } else if (isRight) {
-                                offsetX = h.areaWidth - line.totalWidth;
+                                x += h.areaWidth - line.totalWidth;
                             }
                         }
                         line.nodes.each { &(n)
-                            writer.write(n, x + offsetX, y);
+                            writer.write(n, x, y);
                             x += n.width;
                         };
                         y -= line.lineFeedWidth;
                     };
                     if (align_[i].left && !h.colspan) {
+                        var diff = prevLineCount == 2 ? 1 : 0;
                         drawVLine(writer, i == 0 ? 0 : -1, align_[i].lcount, xbase,
-                            ybase + totalLineFeedWidth, 0, totalLineFeedWidth, 0.4);
+                            ybase + totalLineFeedWidth + diff, 0, totalLineFeedWidth + diff, lineWidthBase);
                     }
                     xbase += h.width;
                     if (align_[i].right) {
                         drawVLine(writer, -2, align_[i].rcount, xbase,
-                            ybase + totalLineFeedWidth, 0, totalLineFeedWidth, 0.4);
+                            ybase + totalLineFeedWidth, 0, totalLineFeedWidth, lineWidthBase);
                     }
                 }
             }
 
-            private outputText(writer, table, array) {
+            private outputText(writer, table, array, prevLineCount, nextLineCount, isLast) {
                 var xbase = left_;
                 var ybase = array.y + offsetY_;
                 var totalLineFeedWidth = array.totalLineFeedWidth;
@@ -425,6 +459,7 @@ namespace Typesetting {
                         var hline1 = table.body[header_.index + 1];
                         if (hline1.isTableHLine) {
                             outputLine(writer, header_, hline1.count, +1, ybase, null);
+                            prevLineCount = hline1.count;
                         }
                     }
                     if (colnum == 0) {
@@ -435,16 +470,19 @@ namespace Typesetting {
                     ybase = array.y + offsetY_;
                 }
 
-                outputTextImpl(array, writer, xbase, ybase, totalLineFeedWidth);
+                outputTextImpl(array, writer, xbase, ybase, totalLineFeedWidth, prevLineCount, nextLineCount);
                 return ybase;
             }
 
             private outputBody(table) {
                 var writer = info_.writer;
-                var ybase;
-                for (var i = 0, l = table.body.length() - 1; i <= l; ++i) {
+                var ybase, prevLineCount = 0;
+                var l = table.body.length() - 1;
+                for (var i = 0, l2 = l - 1; i <= l; ++i) {
                     var nextLine = getNextLine(table.body, i, l);
                     var ba = table.body[i];
+                    var i1 = i + 1;
+                    var nextLineCount = (i < l2 && table.body[i1].isTableHLine) ? table.body[i1].count : 0;
                     if (ba.isTableHLine) {
                         if (i == 0) {
                             var array = table.body[1];
@@ -467,14 +505,17 @@ namespace Typesetting {
                                     }
                                 }
                                 outputLine(writer, array, ba.count, 0, array.y + array.totalLineFeedWidth + offsetY_, nextLine);
+                                prevLineCount = ba.count;
                             }
                         } else if (i == l) {
                             outputLine(writer, table.body[i-1], ba.count, +2, null, nextLine);
                         } else {
                             outputLine(writer, table.body[i-1], ba.count, +1, null, nextLine);
+                            prevLineCount = ba.count;
                         }
                     } else {
-                        ybase = outputText(writer, table, ba, nextLine);
+                        ybase = outputText(writer, table, ba, prevLineCount, nextLineCount);
+                        prevLineCount = 0;
                     }
                 }
                 return ybase;

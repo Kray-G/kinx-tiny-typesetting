@@ -1,0 +1,17 @@
+namespace Typesetting {
+
+    namespace ParagraphCommand {
+
+        class Def(info_, context_) {
+            var params_;
+            public start(params) {
+                params_ = params.name ?? params ?? "_temp";
+            }
+            public translate(value) {
+                context_.def[params_] = new Typesetting.WordSet(info_).addWord(value);
+            }
+        }
+
+    } # namespace ParagraphCommand
+
+} # namespace Typesetting

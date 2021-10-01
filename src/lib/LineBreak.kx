@@ -276,6 +276,9 @@ namespace Typesetting {
             isBox: true,
             width: width,
             value: value,
+            isAllGlue: function() {
+                return value.isAllGlue();
+            },
             display: function(indent) {
                 indent ??= 0;
                 if (indent) {
@@ -300,6 +303,9 @@ namespace Typesetting {
             width: width,
             stretch: stretch,
             shrink: shrink,
+            isAllGlue: function() {
+                return true;
+            },
             display: function(indent) {
                 indent ??= 0;
                 if (indent) {
@@ -320,6 +326,9 @@ namespace Typesetting {
             width: width,
             penalty: penalty,
             flagged: flagged,
+            isAllGlue: function() {
+                return true;
+            },
             display: function(indent) {
                 indent ??= 0;
                 if (indent) {

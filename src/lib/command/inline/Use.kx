@@ -1,0 +1,24 @@
+namespace Typesetting {
+
+    namespace Command {
+
+        class Use(info_, context_) {
+            public exec(params, value) {
+                if (context_.deftext[value].isString) {
+                    var parser = new Typesetting.ParagraphParser(context_, info_);
+                    var wordSet = parser.parse(context_.deftext[value]);
+                    return new Typesetting.WordSet(info_).addWord(wordSet);
+                }
+                if (context_.def[value].isUndefined) {
+                    var parser = new Typesetting.ParagraphParser(context_, info_);
+                    var wordSet = parser.parse("\\color[red]{\\italic{\\bold{ERROR!} Text not defined for the label of '%{value}'.}}");
+                    info_.logger.error("Text not defined for the label of '%{value}'");
+                    return new Typesetting.WordSet(info_).addWord(wordSet);
+                }
+                return context_.def[value];
+            }
+        }
+
+    } # namespace ParagraphCommand
+
+} # namespace Typesetting
