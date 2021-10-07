@@ -281,6 +281,7 @@ namespace Typesetting {
                     lineprev -= info.base.code.padding;
                 }
 
+                var ybottom = writer.getYBottom();
                 var isTop = false;
                 var tlast = texts.length() - 1;
                 texts.each { &(line, i)
@@ -305,7 +306,7 @@ namespace Typesetting {
                         writeLineWithColor(line, context.font.fontObj, codeFontSize, info, context, core, writer, lineFeedWidthBase);
                     }
 
-                    var isBreak = writer.getPos(true).y <= writer.getYBottom();
+                    var isBreak = writer.getPos(true).y <= ybottom;
                     if (!isBreak) {
                         linetop1 = writer.getLineTop(context.font.fontObj, context.font.codeFontSize);
                         var height = lineprev - linetop1;
@@ -342,6 +343,7 @@ namespace Typesetting {
                             lineprev = pageMargin.pageHeight - margin.top;
                             isTop = true;
                         }
+                        ybottom = writer.getYBottom();
                     }
                 };
 
