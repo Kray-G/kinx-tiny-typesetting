@@ -12,6 +12,7 @@ namespace Typesetting {
 
     var lbr_ = "（｛〔〈《「『【〘〖｟";
     var rbr_ = "）｝〕〉》」』】〙〗｠";
+    var noGlueAfterQuote_ = ")}]>,.;:）｝〕〉》」』】〙〗｠";
     var nextNeedGlue_ = "？！";
 
     var space_ = {};
@@ -318,7 +319,8 @@ namespace Typesetting {
                             setupSpace(info, value);
                             nodes.push(Linebreak.Glue(0, space_.stretch, 0));
                         } else if (l1 == 1 && l2 == 1) {
-                            if (isQuoteUtf8(value.word) || isQuoteUtf8(nextv.word)) {
+                            if ((isQuoteUtf8(value.word) || isQuoteUtf8(nextv.word)) &&
+                                    noGlueAfterQuote_.find(nextv.word.subString(0, 1)) < 0) {
                                 setupSpace(info, value);
                                 nodes.push(Linebreak.Glue(space_.width, space_.stretch, space_.shrink));
                             }
