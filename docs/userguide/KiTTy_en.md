@@ -936,16 +936,16 @@ The unit you can specified is as follows.
 <context label="Table:FontSizeUnit"/>
 <context caption="Unit for Font Size"/>
 
-| Unit |                            Meaning                            |
-| ---- | ------------------------------------------------------------- |
-| `em` | Relative size based on the current font size.                 |
-| `ex` | Relative size based on the x height at the current font size. |
-| `px` | By Pixel.                                                     |
-| `pt` | By Point.                                                     |
-| `pc` | By Pica, which means 1/6 inch.                                |
-| `mm` | By Millimeter.                                                |
-| `cm` | By Centimeter.                                                |
-| `in` | By Inch.                                                      |
+| Unit  |                            Meaning                            |
+| :---: | ------------------------------------------------------------- |
+| `em`  | Relative size based on the current font size.                 |
+| `ex`  | Relative size based on the x height at the current font size. |
+| `px`  | By Pixel.                                                     |
+| `pt`  | By Point.                                                     |
+| `pc`  | By Pica, which means 1/6 inch.                                |
+| `mm`  | By Millimeter.                                                |
+| `cm`  | By Centimeter.                                                |
+| `in`  | By Inch.                                                      |
 
 #### Font Size (Relative)
 
@@ -1104,8 +1104,8 @@ By the way, a language is specified right after <backq3 />, and use `:` as a sep
 | `chart`            | This means a Chart syntax. See \\nameref{Chart} for details.                     |
 | `console`          | A text color is white and a background color is black.                           |
 | `JSON`             | Code highlighting with JSON style.                                               |
-| `c`、`c++`、`cpp`  | Code highlighting with C/C++ style.                                              |
-| `javascript`、`js` | Code highlighting with JavaScript style.                                         |
+| `c`, `c++`, `cpp`  | Code highlighting with C/C++ style.                                              |
+| `javascript`, `js` | Code highlighting with JavaScript style.                                         |
 | `java`             | Code highlighting with Java style.                                               |
 | `kinx`             | Code highlighting with Kinx style.                                               |
 | `ruby`             | Code highlighting with Ruby style.                                               |
