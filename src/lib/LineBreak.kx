@@ -280,11 +280,7 @@ namespace Typesetting {
                 return value.isAllGlue();
             },
             display: function(indent) {
-                indent ??= 0;
-                if (indent) {
-                    System.print("    " * indent);
-                }
-                System.println("'%{value.word}' - Box, width:%{@width}, offset(%{value.offsetX??0},%{value.offsetY??0})");
+                value.display(indent);
             },
             write: function(writer, x, y, isFloatingLine, align) {
                 if (value.write.isFunction) {
