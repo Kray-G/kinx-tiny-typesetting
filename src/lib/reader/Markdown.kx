@@ -713,6 +713,7 @@ namespace Typesetting {
             var hlineBottom = getContextValue('hline-bottom', true);
             var hlineHeader = getContextValue('hline-header', true);
             var hlineInside = getContextValue('hline-inside', true);
+            var fixedColumns = getContextValue('fixed-columns', true);
             var limitColumn = getContextValue('limit-column', true);
             var limitWidth = getContextValue('limit-width', true);
             var cellVAlign = getContextValue('cell-valign', true);
@@ -761,6 +762,7 @@ namespace Typesetting {
                     cellAlign: aligns,
                     cellVAlign: cellVAlign,
                     bgColor: bgColor,
+                    fixedColumns: fixedColumns ? fixedColumns : "",
                     limitColumn: limitColumn ? Integer.parseInt(limitColumn) : null,
                     limitWidth: limitWidth ? Double.parseDouble(limitWidth) : null,
                     body: body,

@@ -181,7 +181,6 @@ namespace Typesetting {
                     ay: ay,
                     y: value.annotPos.y,
                 });
-                writeColorText(page, x, ay, linkAnnot_.color ?? textcolor ?? [0, 1, 1, 0], text);
             }
             if (value.endAnnot || value.inAnnot) {
                 var annot = annot_[-1];

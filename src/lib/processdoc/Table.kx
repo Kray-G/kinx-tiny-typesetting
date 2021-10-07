@@ -13,7 +13,7 @@ namespace Typesetting {
             var savedPos_, savedMargin_;
             var bottom_, align_, valign_, bgColor_, header_;
             var offsetY_ = 0;
-            var limitWidthBase_ = 50;
+            var limitWidthBase_ = 20;
             var limitWidthDefault_ = limitWidthBase_;
             var limitWidth_ = [];
 
@@ -35,12 +35,12 @@ namespace Typesetting {
                 return null;
             }
 
-            private adjustWidth(lens, sorted) {
+            private adjustWidth(lens, sorted, toolong) {
                 var l = sorted.length() - 1;
                 for (var i = 0; i < l; ++i) {
                     var li = lens[sorted[i].index];
                     var ln = lens[sorted[i+1].index];
-                    if (0 < li && (li * 2) < ln) {
+                    if (0 < li && (li * 2) < ln && toolong < ln) {
                         for (var j = i+1; j <= l; ++j) {
                             var e = sorted[j];
                             lens[e.index] = lens[e.index] * 5 / 8;
@@ -51,13 +51,13 @@ namespace Typesetting {
                 return false;
             }
 
-            private checkWidth(lens, widthlist, texts) {
+            private checkWidth(lens, widthlist, texts, toolong) {
                 var sorted = lens.map { => ({ index: _2, len: _1, limit: limitWidth_[_2], width: widthlist[_2], text: texts[_2] }) }.sort { => _1.len <=> _2.len };
                 var l = sorted.length();
                 for (var i = 0; i < l; ++i) {
                     var e = sorted[i];
-                    if (0 < e.width.width && e.width.width < (e.limit ?? limitWidthDefault_)) {
-                        if (adjustWidth(lens, sorted)) {
+                    if (0 < e.width.areaWidth && e.width.areaWidth < (e.limit ?? limitWidthDefault_)) {
+                        if (adjustWidth(lens, sorted, toolong)) {
                             return false;
                         }
                         return true;    # no more check.
@@ -93,7 +93,7 @@ namespace Typesetting {
 
             private getLongestLen(b, isHeader) {
                 var len = 0;
-                b.split(/\n\n|<br\s*\/>/).each {
+                b.split(/\n\n|\s*<br\s*\/>\s*/).each {
                     var l = measureText(_1, isHeader);
                     if (len < l) {
                         len = l;
@@ -211,15 +211,16 @@ namespace Typesetting {
                         }
                     }
                 }
-                for (var i = 0, l = lens.length(); i < l; ++i) {
+                var lenslen = lens.length();
+                for (var i = 0, l = lenslen; i < l; ++i) {
                     if (lens[i] < limitWidthDefault_) {
                         lens[i] = limitWidthDefault_;
                     }
                 }
                 var widthlist;
-                for (var i = 0; i < 10; ++i) {
+                for (var i = 0; i < 64; ++i) {
                     var total = 0;
-                    for (var i = 0, l = lens.length(); i < l; ++i) {
+                    for (var i = 0, l = lenslen; i < l; ++i) {
                         total += lens[i];
                     }
                     var width = 0;
@@ -234,7 +235,7 @@ namespace Typesetting {
                             areaWidth: w - info_.base.table.cellPadding * 2,
                         };
                     };
-                    if (checkWidth(lens, widthlist, texts)) {
+                    if (checkWidth(lens, widthlist, texts, lenslen < 4 ? (total / 2) : (total / lenslen) * 2)) {
                         break;
                     }
                 }
